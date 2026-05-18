@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { uploadToCloudinary } from "../../../lib/cloudinary";
 
 // POST /api/user/profile-photo - Upload and save a new user profile photo
 export async function POST(request: Request) {
@@ -23,18 +22,17 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create unique filename
-    const fileExtension = file.name.split(".").pop() || "jpg";
-    const sanitizedFileName = `profile_${user.id}_${Date.now()}.${fileExtension}`;
-    const uploadDir = join(process.cwd(), "public", "uploads", "profile");
-
-    // Ensure upload directory exists
-    await mkdir(uploadDir, { recursive: true });
-
-    const filePath = join(uploadDir, sanitizedFileName);
-    await writeFile(filePath, buffer);
-
-    const publicPhotoUrl = `/uploads/profile/${sanitizedFileName}`;
+    // Upload directly to Cloudinary
+    let publicPhotoUrl: string;
+    try {
+      publicPhotoUrl = await uploadToCloudinary(buffer, "holy-streaks/profiles");
+    } catch (uploadError: any) {
+      console.error("Cloudinary upload error:", uploadError);
+      return NextResponse.json(
+        { error: uploadError.message || "Falha ao enviar imagem para o Cloudinary." },
+        { status: 400 }
+      );
+    }
 
     // Update User record in database
     await prisma.user.update({

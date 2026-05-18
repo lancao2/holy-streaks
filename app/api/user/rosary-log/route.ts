@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { calculateStreak } from "../../../lib/streak";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { uploadToCloudinary } from "../../../lib/cloudinary";
 
 // GET /api/user/rosary-log - Retrieve user's daily status and current streak
 export async function GET(request: Request) {
@@ -78,17 +77,17 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 3. Create a unique file name and save it locally in public/uploads/
-    const sanitizedFileName = `${user.id}_${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-    const uploadDir = join(process.cwd(), "public", "uploads");
-
-    // Ensure target directory exists
-    await mkdir(uploadDir, { recursive: true });
-
-    const filePath = join(uploadDir, sanitizedFileName);
-    await writeFile(filePath, buffer);
-
-    const publicPhotoUrl = `/uploads/${sanitizedFileName}`;
+    // 3. Upload directly to Cloudinary
+    let publicPhotoUrl: string;
+    try {
+      publicPhotoUrl = await uploadToCloudinary(buffer, "holy-streaks/rosaries");
+    } catch (uploadError: any) {
+      console.error("Cloudinary upload error:", uploadError);
+      return NextResponse.json(
+        { error: uploadError.message || "Falha ao enviar foto do terço para o Cloudinary." },
+        { status: 400 }
+      );
+    }
 
     // 4. Create new RosaryLog entry in DB
     const newLog = await prisma.rosaryLog.create({

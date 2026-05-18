@@ -116,7 +116,7 @@ export default function OnboardingForm({ user }: OnboardingFormProps) {
         <div className="w-full max-w-[520px] bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] px-8 py-10 shadow-[0_6px_0_#2A1D19] z-10 text-center box-border relative">
           <div className="text-center mb-[30px]">
             <span className="inline-block px-3.5 py-1.5 bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-full text-[#E96B46] text-[0.82rem] font-extrabold uppercase mb-4 shadow-[0_2px_0_#2A1D19]">Primeiro Acesso 🌟</span>
-            <h1 className="bloom-logo text-[2.4rem] m-0 mb-3 tracking-tight">Complete seu Perfil</h1>
+            <h1 className="bloom-logo text-[1.8rem] sm:text-[2.4rem] m-0 mb-3 tracking-tight leading-[1.1]">Complete seu Perfil</h1>
             <p className="text-[0.95rem] text-[#8C7D75] font-semibold m-0 leading-relaxed">Seja bem-vindo, <strong>{user.firstName}</strong>! Escolha seu nickname exclusivo e informe sua data de nascimento para começarmos.</p>
           </div>
 

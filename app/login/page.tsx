@@ -78,7 +78,7 @@ function LoginForm() {
         <div className="w-full max-w-[420px] bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] px-8 py-10 shadow-[0_6px_0_#2A1D19] z-10 text-center box-border">
           <div className="text-center">
             <span className="text-[2.5rem] inline-block mb-3 filter drop-shadow-[0_2px_0_rgba(42,29,25,0.15)]">🌹</span>
-            <h1 className="bloom-logo text-[2.4rem] m-0 mb-1.5 tracking-tight">Holy Streaks</h1>
+            <h1 className="bloom-logo text-[1.8rem] sm:text-[2.4rem] m-0 mb-1.5 tracking-tight leading-[1.1]">Holy Streaks</h1>
             <p className="text-[0.88rem] text-[#8C7D75] font-semibold m-0 mb-7 leading-relaxed">Entre para ofertar suas rosas diárias e rezar com amigos.</p>
           </div>
 

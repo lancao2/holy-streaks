@@ -108,8 +108,18 @@ input:focus, textarea:focus, select:focus {
 }
 
 .bloom-logo {
-  white-space: nowrap;
   font-family: 'Fredoka', sans-serif;
+}
+
+/* Allow text wrapping for logo-style headers on mobile/wrap-needed screens */
+h1.bloom-logo, h2.bloom-logo, h3.bloom-logo {
+  white-space: normal !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.logo-group .bloom-logo, .dashboard-header .bloom-logo {
+  white-space: nowrap !important;
 }
 
 .logo-icon {

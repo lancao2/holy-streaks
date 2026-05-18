@@ -388,8 +388,8 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
 
   // Determine if the currently selected challenge is over and calculate winners
   const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
-  const endStr = selectedGroup?.endDate 
-    ? new Date(selectedGroup.endDate).toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" }) 
+  const endStr = selectedGroup?.endDate
+    ? new Date(selectedGroup.endDate).toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" })
     : null;
   const isChallengeOver = endStr ? todayStr > endStr : false;
 
@@ -456,15 +456,15 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
           </div>
 
           <div className="user-profile-widget max-[480px]:hidden">
-            <input 
-              type="file" 
-              ref={profilePhotoInputRef} 
-              onChange={handleProfilePhotoChange} 
-              accept="image/*" 
-              className="hidden" 
+            <input
+              type="file"
+              ref={profilePhotoInputRef}
+              onChange={handleProfilePhotoChange}
+              accept="image/*"
+              className="hidden"
             />
-            <div 
-              className="avatar-circle relative group cursor-pointer overflow-hidden border-[2.5px] border-[#2A1D19] flex items-center justify-center bg-peach" 
+            <div
+              className="avatar-circle relative group cursor-pointer overflow-hidden border-[2.5px] border-[#2A1D19] flex items-center justify-center bg-peach"
               onClick={triggerProfilePhotoUpload}
               title="Clique para trocar sua foto de perfil"
             >
@@ -499,11 +499,10 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
                 <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
                   {/* Back button */}
                   <button
-                    className="flex items-center gap-1.5 bg-white border-[2.5px] border-[#2A1D19] text-[#2A1D19] font-extrabold px-5 py-2.5 rounded-[30px] shadow-[0_3px_0_#2A1D19] hover:-translate-y-[1.5px] hover:shadow-[0_4.5px_0_#2A1D19] active:translate-y-[1px] active:shadow-[0_1.5px_0_#2A1D19] cursor-pointer text-[0.8rem] transition-all duration-150 uppercase"
+                    className="flex items-center gap-1.5 bg-white border-[2.5px] border-[#2A1D19] text-[#2A1D19] font-extrabold px-2 pl-3 py-2.5 rounded-[30px] shadow-[0_3px_0_#2A1D19] hover:-translate-y-[1.5px] hover:shadow-[0_4.5px_0_#2A1D19] active:translate-y-[1px] active:shadow-[0_1.5px_0_#2A1D19] cursor-pointer text-[0.8rem] transition-all duration-150 uppercase"
                     onClick={() => { setSelectedGroup(null); setSelectedGroupDetails(null); }}
                   >
                     <ArrowLeft size={16} strokeWidth={2.5} className="inline-block mr-1.5 align-middle" />
-                    Voltar para Desafios
                   </button>
 
                   {/* Leave challenge button with premium flat aesthetic */}
@@ -527,21 +526,21 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
 
                   {/* Left Column: Challenge Metadata and Today's Logged Rosaries */}
                   <div className="lg:col-span-2 flex flex-col gap-6">
-                    
+
                     {isChallengeOver && (
                       <div className="bg-[#F8E7CD] border-[3px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_5px_0_#2A1D19] text-center relative overflow-hidden animate-fade-in mb-2">
                         {/* Elegant floating laurels/stars in background */}
                         <div className="absolute -right-6 -bottom-6 text-[6rem] opacity-15 select-none pointer-events-none">🏆</div>
                         <div className="absolute -left-6 -top-6 text-[6rem] opacity-15 select-none pointer-events-none">🌹</div>
-                        
+
                         <span className="inline-block bg-[#E96B46] text-white text-[0.8rem] font-black px-4.5 py-1.5 rounded-[20px] border-[2.5px] border-[#2A1D19] shadow-[1.5px_1.5px_0_#2A1D19] uppercase tracking-wider mb-3">
                           🏆 Desafio Concluído!
                         </span>
-                        
+
                         <h3 className="text-[1.55rem] font-black text-[#2A1D19] m-0 mb-2 font-fredoka uppercase">
                           Grande Vencedor da Fé
                         </h3>
-                        
+
                         {winners.length > 0 ? (
                           <div className="flex flex-col items-center justify-center gap-3 mt-4">
                             <div className="flex flex-wrap justify-center gap-3">
