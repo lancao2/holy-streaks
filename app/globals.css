@@ -1078,6 +1078,15 @@ h1.bloom-logo, h2.bloom-logo, h3.bloom-logo {
   border-radius: 16px;
   padding: 10px 14px;
   gap: 12px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.member-list-item.first-place-highlight {
+  background: #FFFBE5 !important;
+  border: 2.5px solid #2A1D19 !important;
+  box-shadow: 0 4.5px 0 #FFC107, 0 4.5px 0 2.5px #2A1D19 !important;
+  transform: translateY(-2px);
 }
 
 .member-avatar {
@@ -1499,6 +1508,7 @@ h1.bloom-logo, h2.bloom-logo, h3.bloom-logo {
     width: 100%;
     justify-content: center;
     box-sizing: border-box;
+    display: flex;
   }
   .create-group-btn-banner {
     width: 100%;
@@ -1521,6 +1531,7 @@ h1.bloom-logo, h2.bloom-logo, h3.bloom-logo {
 /* --- ROSE STREAK BADGE ON DASHBOARD --- */
 .welcome-streak-badge {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 12px;
   background: var(--accent-peach);

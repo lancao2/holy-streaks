@@ -132,6 +132,7 @@ export async function GET(
         streak: currentStreak,
         hasLoggedToday,
         todayPhotoUrl: todayLog ? todayLog.photoUrl : null,
+        todayLoggedAt: todayLog ? todayLog.createdAt.toISOString() : null,
       };
     });
 

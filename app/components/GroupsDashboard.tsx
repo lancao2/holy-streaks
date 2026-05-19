@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Home, Flower, Bell, User, LogOut, ArrowLeft, Camera } from "lucide-react";
+import { Home, Flower, Bell, User, LogOut, ArrowLeft, Camera, Pencil, Sparkles, Flame, Sun, Crown, Check, ChevronDown, ChevronUp } from "lucide-react";
 import DailyRosaryWidget from "./DailyRosaryWidget";
 
 interface User {
@@ -47,6 +47,7 @@ interface Member {
   streak: number;
   hasLoggedToday: boolean;
   todayPhotoUrl: string | null;
+  todayLoggedAt?: string | null;
 }
 
 const getSaintImage = (groupId: string) => {
@@ -85,6 +86,113 @@ const getSaintImage = (groupId: string) => {
   return saintImages[index];
 };
 
+const sortMembers = (members: Member[]) => {
+  return [...members].sort((a, b) => {
+    // 1. Sort by streak (more roses first)
+    if (b.streak !== a.streak) {
+      return b.streak - a.streak;
+    }
+
+    // 2. If streaks are equal, compare logged today status (logged today first)
+    if (a.hasLoggedToday && !b.hasLoggedToday) return -1;
+    if (!a.hasLoggedToday && b.hasLoggedToday) return 1;
+
+    // 3. If both logged today, compare log times (earlier first)
+    if (a.hasLoggedToday && b.hasLoggedToday && a.todayLoggedAt && b.todayLoggedAt) {
+      const timeA = new Date(a.todayLoggedAt).getTime();
+      const timeB = new Date(b.todayLoggedAt).getTime();
+      if (timeA !== timeB) {
+        return timeA - timeB;
+      }
+    }
+
+    // 4. Default fallback: joined date
+    return new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime();
+  });
+};
+
+const getTodayMysteries = () => {
+  const daysOfWeek = [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado"
+  ];
+
+  const todayIndex = new Date().getDay();
+  const dayName = daysOfWeek[todayIndex];
+
+  const mysteries = {
+    gozosos: {
+      title: "Mistérios Gozosos",
+      description: "Contemplamos a alegria da Encarnação e da infância de Jesus.",
+      icon: "✨",
+      items: [
+        "A Anunciação do Anjo e a Encarnação do Verbo",
+        "A Visitação de Maria a sua prima Santa Isabel",
+        "O Nascimento de Jesus na Gruta de Belém",
+        "A Apresentação do Menino Jesus no Templo",
+        "O Encontro do Menino Jesus no Templo entre os Doutores"
+      ]
+    },
+    dolorosos: {
+      title: "Mistérios Dolorosos",
+      description: "Contemplamos a Paixão e a Morte Redentora de Cristo.",
+      icon: "✝️",
+      items: [
+        "A Agonia de Jesus no Horto das Oliveiras",
+        "A Flagelação de Nosso Senhor Jesus Cristo",
+        "A Coroação de Espinhos de Nosso Senhor",
+        "Jesus carregando a Cruz a caminho do Calvário",
+        "A Crucificação e Morte de Nosso Senhor"
+      ]
+    },
+    gloriosos: {
+      title: "Mistérios Gloriosos",
+      description: "Contemplamos a glória da Ressurreição e do Céu.",
+      icon: "👑",
+      items: [
+        "A Ressurreição de Nosso Senhor Jesus Cristo",
+        "A Ascensão de Jesus ao Céu",
+        "A Vinda do Espírito Santo sobre os Apóstolos",
+        "A Assunção de Nossa Senhora ao Céu",
+        "A Coroação de Maria Santíssima no Céu"
+      ]
+    },
+    luminosos: {
+      title: "Mistérios Luminosos",
+      description: "Contemplamos a vida pública e os milagres de Jesus.",
+      icon: "💡",
+      items: [
+        "O Batismo de Jesus no Rio Jordão",
+        "A Revelação de Jesus nas Bodas de Caná",
+        "O Anúncio do Reino de Deus e o chamado à conversão",
+        "A Transfiguração de Jesus no Monte Tabor",
+        "A Instituição da Santíssima Eucaristia"
+      ]
+    }
+  };
+
+  let selected;
+  if (todayIndex === 1 || todayIndex === 6) {
+    selected = mysteries.gozosos;
+  } else if (todayIndex === 2 || todayIndex === 5) {
+    selected = mysteries.dolorosos;
+  } else if (todayIndex === 3 || todayIndex === 0) {
+    selected = mysteries.gloriosos;
+  } else {
+    selected = mysteries.luminosos;
+  }
+
+  return {
+    dayName,
+    ...selected
+  };
+};
+
 interface GroupsDashboardProps {
   user: User;
 }
@@ -99,6 +207,18 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
   const [selectedGroupDetails, setSelectedGroupDetails] = useState<{ members: Member[] } | null>(null);
   const [activeTab, setActiveTab] = useState<"home" | "diario" | "notificacoes" | "perfil">("home");
   const [autoTriggerUpload, setAutoTriggerUpload] = useState(false);
+
+  const [currentUsername, setCurrentUsername] = useState<string>(user.username);
+  const [showEditNicknameModal, setShowEditNicknameModal] = useState(false);
+  const [newNickname, setNewNickname] = useState(user.username || "");
+  const [editNicknameLoading, setEditNicknameLoading] = useState(false);
+  const [editNicknameError, setEditNicknameError] = useState("");
+  const [editNicknameSuccess, setEditNicknameSuccess] = useState(false);
+  const [completedDecades, setCompletedDecades] = useState<number[]>([]);
+  const [mysteriesCollapsed, setMysteriesCollapsed] = useState(false);
+  const [hasLoggedToday, setHasLoggedToday] = useState(false);
+
+  const todayMysteries = getTodayMysteries();
 
   // Pending Challenge Invitations States
   interface Invitation {
@@ -159,6 +279,10 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
       if (res.ok) {
         const data = await res.json();
         setUserStreak(data.currentStreak || 0);
+        setHasLoggedToday(data.hasLoggedToday || false);
+        if (data.hasLoggedToday) {
+          setCompletedDecades([0, 1, 2, 3, 4]);
+        }
       }
     } catch (err) {
       console.error("Erro ao buscar streak de rosas:", err);
@@ -380,6 +504,8 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
   // Re-fetch challenges list and details when daily log is submitted
   const handleDailyStreakUpdate = (newStreak: number) => {
     setUserStreak(newStreak);
+    setHasLoggedToday(true);
+    setCompletedDecades([0, 1, 2, 3, 4]);
     fetchGroups();
     if (selectedGroup) {
       fetchGroupDetails(selectedGroup.id);
@@ -438,6 +564,53 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
     }
   };
 
+  const handleUpdateNickname = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newNickname.trim()) return;
+
+    const trimmed = newNickname.trim().toLowerCase();
+
+    // Client-side quick check
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,30}$/;
+    if (!usernameRegex.test(trimmed)) {
+      setEditNicknameError("O nickname deve conter entre 3 e 30 caracteres e usar apenas letras, números, hífen (-) ou underline (_).");
+      return;
+    }
+
+    setEditNicknameLoading(true);
+    setEditNicknameError("");
+    setEditNicknameSuccess(false);
+
+    try {
+      const res = await fetch("/api/user/nickname", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: trimmed }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setEditNicknameError(data.error || "Erro ao atualizar o nickname.");
+        setEditNicknameLoading(false);
+        return;
+      }
+
+      setCurrentUsername(trimmed);
+      setEditNicknameSuccess(true);
+
+      // Delay closing modal slightly to show success checkmark
+      setTimeout(() => {
+        setShowEditNicknameModal(false);
+        setEditNicknameSuccess(false);
+      }, 1200);
+    } catch (err) {
+      console.error(err);
+      setEditNicknameError("Erro de rede. Tente novamente.");
+    } finally {
+      setEditNicknameLoading(false);
+    }
+  };
+
   return (
     <>
       {/* Dynamic font loading */}
@@ -447,6 +620,13 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
       />
 
       <div className="dashboard-container">
+        <input
+          type="file"
+          ref={profilePhotoInputRef}
+          onChange={handleProfilePhotoChange}
+          accept="image/*"
+          className="hidden"
+        />
 
         {/* Top Navbar */}
         <header className="dashboard-header">
@@ -456,13 +636,6 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
           </div>
 
           <div className="user-profile-widget max-[480px]:hidden">
-            <input
-              type="file"
-              ref={profilePhotoInputRef}
-              onChange={handleProfilePhotoChange}
-              accept="image/*"
-              className="hidden"
-            />
             <div
               className="avatar-circle relative group cursor-pointer overflow-hidden border-[2.5px] border-[#2A1D19] flex items-center justify-center bg-peach"
               onClick={triggerProfilePhotoUpload}
@@ -481,7 +654,7 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
             </div>
             <div className="user-info-text">
               <span className="user-name-label">{user.firstName} {user.lastName}</span>
-              <span className="user-username-label">@{user.username}</span>
+              <span className="user-username-label">@{currentUsername}</span>
             </div>
             <a href="/api/auth/logout" className="logout-btn-nav" title="Sair da Conta">
               Sair
@@ -687,36 +860,47 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
                       ) : (
                         <div className="members-scrollable">
                           {/* Active Members */}
-                          {selectedGroupDetails.members.filter(m => m.status === "ACCEPTED").map((member) => (
-                            <div key={member.id} className="member-list-item">
-                              <div className="member-avatar overflow-hidden relative flex items-center justify-center">
-                                {member.user.profilePhotoUrl ? (
-                                  <img src={member.user.profilePhotoUrl} alt={member.user.firstName} className="w-full h-full object-cover rounded-full" />
-                                ) : (
-                                  getInitials(member.user.firstName, member.user.lastName)
+                          {sortMembers(selectedGroupDetails.members.filter(m => m.status === "ACCEPTED")).map((member, index) => {
+                            const isFirst = index === 0;
+                            return (
+                              <div
+                                key={member.id}
+                                className={`member-list-item ${isFirst ? "first-place-highlight" : ""}`}
+                              >
+                                {isFirst && (
+                                  <span className="absolute -top-3.5 -left-2 text-[1.6rem] rotate-[-15deg] drop-shadow-[0_1.5px_0_#2A1D19] z-10 select-none">
+                                    👑
+                                  </span>
                                 )}
-                              </div>
+                                <div className="member-avatar overflow-hidden relative flex items-center justify-center">
+                                  {member.user.profilePhotoUrl ? (
+                                    <img src={member.user.profilePhotoUrl} alt={member.user.firstName} className="w-full h-full object-cover rounded-full" />
+                                  ) : (
+                                    getInitials(member.user.firstName, member.user.lastName)
+                                  )}
+                                </div>
 
-                              <div className="member-info">
-                                <span className="member-name">{member.user.firstName} {member.user.lastName}</span>
-                                <span className="member-handle">@{member.user.username}</span>
-                              </div>
+                                <div className="member-info">
+                                  <span className="member-name">{member.user.firstName} {member.user.lastName}</span>
+                                  <span className="member-handle">@{member.user.username}</span>
+                                </div>
 
-                              <div className="member-streak-column">
-                                <span className={`flame-badge-member ${member.streak > 0 ? "active-flame" : "inactive-flame"}`}>
-                                  🌹 {member.streak} {member.streak === 1 ? "rosa" : "rosas"}
-                                </span>
-                              </div>
+                                <div className="member-streak-column">
+                                  <span className={`flame-badge-member ${member.streak > 0 ? "active-flame" : "inactive-flame"}`}>
+                                    🌹 {member.streak} {member.streak === 1 ? "rosa" : "rosas"}
+                                  </span>
+                                </div>
 
-                              <div className="member-role-col">
-                                {member.role === "CREATOR" ? (
-                                  <span className="badge-role-gold">Líder</span>
-                                ) : (
-                                  <span className="badge-role-grey">Membro</span>
-                                )}
+                                <div className="member-role-col">
+                                  {member.role === "CREATOR" ? (
+                                    <span className="badge-role-gold">Líder</span>
+                                  ) : (
+                                    <span className="badge-role-grey">Membro</span>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
 
                           {/* Pending Invited Members */}
                           {selectedGroupDetails.members.filter(m => m.status === "PENDING").length > 0 && (
@@ -770,17 +954,144 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
                   </div>
 
                   {/* Rose Counter Badge on page / */}
-                  <div className="welcome-streak-badge">
+                  <div className="welcome-streak-badge flex">
                     <span className="welcome-streak-icon">🌹</span>
                     <div className="welcome-streak-info">
                       <span className="welcome-streak-count">{userStreak}</span>
-                      <span className="welcome-streak-label">{userStreak === 1 ? "Rosa Coletada" : "Rosas Coletadas"}</span>
+                      <span className="welcome-streak-label">{userStreak === 1 ? "Rosa" : "Rosas"}</span>
                     </div>
                   </div>
 
                   <button className="create-group-btn-banner" onClick={() => setShowCreateModal(true)}>
                     + Criar Novo Desafio
                   </button>
+                </section>
+
+                {/* Mysteries of the Day Widget */}
+                <section className={`mysteries-day-section bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] shadow-[0_4.5px_0_#2A1D19] mb-8 text-left relative overflow-hidden transition-all duration-300 ${mysteriesCollapsed ? "p-4" : "p-6"
+                  }`}>
+                  {/* Subtle background decoration - clean Lucide Flower vector */}
+                  <div className="absolute right-[-20px] top-[-20px] text-[#E96B46] opacity-[0.04] pointer-events-none select-none">
+                    <Flower size={mysteriesCollapsed ? 95 : 135} strokeWidth={1.5} className="transition-all duration-300" />
+                  </div>
+
+                  <div className="flex flex-wrap justify-between items-center gap-3 border-b border-[#2A1D19]/10 pb-3">
+                    <div>
+                      <span className="text-[0.72rem] font-extrabold text-[#E96B46] uppercase tracking-wider block">
+                        Mistérios de Hoje ({todayMysteries.dayName})
+                      </span>
+                      <h3 className="text-[1.4rem] font-black text-[#2A1D19] m-0 font-fredoka uppercase flex items-center gap-2 mt-0.5">
+                        <span className="text-[1.45rem]">{todayMysteries.icon}</span>
+                        {todayMysteries.title}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center justify-between w-full">
+                      <span className="bg-[#FFF2EE] border-[2px] border-[#2A1D19] text-[#E96B46] text-[0.8rem] font-bold px-3.5 py-1 rounded-[16px] shadow-[1.5px_1.5px_0_#2A1D19]">
+                        {completedDecades.length}/5 Mistérios
+                      </span>
+                      <button
+                        onClick={() => setMysteriesCollapsed(!mysteriesCollapsed)}
+                        className="flex items-center justify-center border-[2px] border-[#2A1D19] rounded-[10px] w-9 h-9 bg-[#F3EEEC] hover:bg-[#EAE2E0] transition-colors shadow-[1.5px_1.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[1px_1px_0_#2A1D19]"
+                        title={!mysteriesCollapsed ? "Mostrar mistérios" : "Recolher mistérios"}
+                      >
+                        {!mysteriesCollapsed ? <ChevronDown size={18} strokeWidth={2.5} /> : <ChevronUp size={18} strokeWidth={2.5} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {!mysteriesCollapsed && (
+                    <div className="mt-4 flex flex-col gap-2.5 animate-fadeIn">
+                      <span className="text-[0.72rem] font-black text-[#8C7D75] uppercase tracking-wider">
+                        {hasLoggedToday ? "Terço do dia concluído 🌹" : "Toque nos números para marcar:"}
+                      </span>
+                      <div className="flex justify-around items-center">
+                        {todayMysteries.items.map((item, idx) => {
+                          const isCompleted = completedDecades.includes(idx);
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                if (hasLoggedToday) return;
+                                setCompletedDecades(prev => {
+                                  const next = prev.includes(idx)
+                                    ? prev.filter(i => i !== idx)
+                                    : [...prev, idx];
+
+                                  // When all 5 mysteries are checked off, redirect to Daily Rosary log and trigger the photo rules flow!
+                                  if (next.length === 5) {
+                                    setActiveTab("diario");
+                                    setAutoTriggerUpload(true);
+                                  }
+                                  return next;
+                                });
+                              }}
+                              className={`w-10 h-10 rounded-full border-[2.5px] border-[#2A1D19] font-black text-sm flex items-center justify-center transition-all duration-150 shadow-[2px_2px_0_#2A1D19] ${hasLoggedToday
+                                ? "cursor-default opacity-90"
+                                : "hover:-translate-y-[1px] hover:shadow-[2.5px_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[1px_1px_0_#2A1D19]"
+                                } ${isCompleted
+                                  ? "bg-[#3D6A5D] border-[#3D6A5D] text-white"
+                                  : "bg-white text-[#2A1D19] hover:bg-[#F3EEEC]"
+                                }`}
+                              title={item}
+                            >
+                              {idx + 1}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {mysteriesCollapsed && (
+                    <div className="transition-all duration-300 ease-in-out mt-4 animate-fadeIn">
+                      <p className="text-sm text-[#8C7D75] font-semibold m-0 mb-5 leading-relaxed">
+                        {todayMysteries.description}
+                      </p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        {todayMysteries.items.map((item, idx) => {
+                          const isCompleted = completedDecades.includes(idx);
+                          return (
+                            <div
+                              key={idx}
+                              onClick={() => {
+                                if (hasLoggedToday) return;
+                                setCompletedDecades(prev => {
+                                  const next = prev.includes(idx)
+                                    ? prev.filter(i => i !== idx)
+                                    : [...prev, idx];
+
+                                  // When all 5 mysteries are checked off, redirect to Daily Rosary log and trigger the photo rules flow!
+                                  if (next.length === 5) {
+                                    setActiveTab("diario");
+                                    setAutoTriggerUpload(true);
+                                  }
+                                  return next;
+                                });
+                              }}
+                              className={`select-none border-[2px] border-[#2A1D19] rounded-[20px] p-3.5 transition-all duration-150 relative flex flex-col justify-between min-h-[105px] shadow-[0_3px_0_#2A1D19] ${hasLoggedToday
+                                ? "cursor-default opacity-90"
+                                : "cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_4px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[0_2px_0_#2A1D19]"
+                                } ${isCompleted ? "bg-[#EBF7EE] border-[#4F857D]" : "bg-white"
+                                }`}
+                            >
+                              <div className="flex justify-between items-start gap-1">
+                                <span className={`text-[0.7rem] font-black w-5 h-5 rounded-full flex items-center justify-center border-[1.5px] border-[#2A1D19] transition-all duration-150 ${isCompleted ? "bg-[#3D6A5D] border-[#3D6A5D] text-white" : "bg-[#F3EEEC] text-[#8C7D75]"
+                                  }`}>
+                                  {isCompleted ? <Check size={12} strokeWidth={3} /> : idx + 1}
+                                </span>
+                              </div>
+                              <p className={`text-[0.75rem] font-extrabold m-0 mt-3.5 leading-snug transition-all duration-150 ${isCompleted ? "text-[#3D6A5D] line-through opacity-75" : "text-[#2A1D19]"
+                                }`}>
+                                {item}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </section>
 
                 <section className="groups-section-container">
@@ -929,13 +1240,42 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
 
               <div className="bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] p-8 max-w-[480px] mx-auto text-center shadow-[0_6px_0_#2A1D19]">
                 <div className="flex justify-center mb-4">
-                  <div className="w-[84px] h-[84px] rounded-full bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] flex items-center justify-center font-extrabold text-[1.8rem] text-[#E96B46] shadow-[0_3px_0_#2A1D19]">
-                    {getInitials(user.firstName, user.lastName)}
+                  <div
+                    className="w-[84px] h-[84px] rounded-full relative group cursor-pointer overflow-hidden border-[2.5px] border-[#2A1D19] flex items-center justify-center bg-[#FFF2EE] shadow-[0_3px_0_#2A1D19]"
+                    onClick={triggerProfilePhotoUpload}
+                    title="Clique para trocar sua foto de perfil"
+                  >
+                    {uploadingProfilePhoto ? (
+                      <span className="spinner-inline border-[2px] border-t-transparent border-[#2A1D19] w-6 h-6"></span>
+                    ) : profilePhoto ? (
+                      <img src={profilePhoto} alt="Foto de perfil" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <span className="font-extrabold text-[1.8rem] text-[#E96B46]">
+                        {getInitials(user.firstName, user.lastName)}
+                      </span>
+                    )}
+                    <div className="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 rounded-full">
+                      <Camera size={24} className="text-white" />
+                    </div>
                   </div>
                 </div>
 
                 <h2 className="font-bold text-[#2A1D19] text-[1.5rem] m-0 mb-1">{user.firstName} {user.lastName}</h2>
-                <p className="text-[#E96B46] font-extrabold text-[0.95rem] m-0 mb-6">@{user.username}</p>
+                <div className="flex items-center justify-center gap-1.5 mb-6">
+                  <p className="text-[#E96B46] font-extrabold text-[0.95rem] m-0">@{currentUsername}</p>
+                  <button
+                    onClick={() => {
+                      setNewNickname(currentUsername);
+                      setEditNicknameError("");
+                      setEditNicknameSuccess(false);
+                      setShowEditNicknameModal(true);
+                    }}
+                    className="text-[#8C7D75] hover:text-[#E96B46] cursor-pointer p-1 transition-colors duration-150 rounded-full hover:bg-[#FFF2EE]"
+                    title="Editar Nickname"
+                  >
+                    <Pencil size={13} strokeWidth={2.5} />
+                  </button>
+                </div>
 
                 <div className="bg-[#F6F0E8] border-[2.5px] border-[#2A1D19] rounded-[20px] p-5 text-left mb-6">
                   <div className="flex justify-between items-center py-2 border-b border-[#2A1D19]/10">
@@ -1025,6 +1365,56 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
 
                 <button type="submit" className="create-group-submit-btn" disabled={createLoading || !newGroupName.trim()}>
                   {createLoading ? <span className="spinner"></span> : "Criar Desafio 🚀"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Nickname Modal */}
+        {showEditNicknameModal && (
+          <div className="modal-overlay" onClick={() => setShowEditNicknameModal(false)}>
+            <div className="modal-content create-group-card" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-close-header">
+                <h3>Editar Seu Nickname</h3>
+                <button className="close-x-btn" onClick={() => setShowEditNicknameModal(false)}>×</button>
+              </div>
+
+              {editNicknameError && <div className="alert-inline alert-inline-error">{editNicknameError}</div>}
+              {editNicknameSuccess && (
+                <div className="alert-inline alert-inline-success">
+                  🎉 Nickname atualizado com sucesso!
+                </div>
+              )}
+
+              <form onSubmit={handleUpdateNickname} className="create-group-form">
+                <div className="form-group-modal">
+                  <label htmlFor="editNickname">Novo Nickname</label>
+                  <div className="invite-input-wrapper mt-1">
+                    <span className="invite-at">@</span>
+                    <input
+                      id="editNickname"
+                      type="text"
+                      placeholder="seu_novo_nickname"
+                      value={newNickname}
+                      onChange={(e) => setNewNickname(e.target.value.toLowerCase().replace(/\s+/g, ""))}
+                      required
+                      maxLength={30}
+                      disabled={editNicknameLoading || editNicknameSuccess}
+                      style={{ paddingLeft: "26px" }}
+                    />
+                  </div>
+                  <span style={{ color: "var(--text-secondary)", fontSize: "0.75rem", marginTop: "6px", lineHeight: "1.4" }}>
+                    Deve conter de 3 a 30 caracteres (apenas letras, números, hífen ou underline).
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  className="create-group-submit-btn mt-2"
+                  disabled={editNicknameLoading || editNicknameSuccess || !newNickname.trim() || newNickname.trim().toLowerCase() === currentUsername}
+                >
+                  {editNicknameLoading ? <span className="spinner"></span> : "Salvar Alterações"}
                 </button>
               </form>
             </div>
