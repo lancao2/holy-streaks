@@ -1,0 +1,30 @@
+{
+  "name": "Holy Streaks - Desafios de Fé e Oração",
+  "short_name": "Holy Streaks",
+  "description": "Participe de desafios diários do terço com seus amigos. Cada terço concluído é uma rosa espiritual para Nossa Senhora.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F6F0E8",
+  "theme_color": "#E96B46",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

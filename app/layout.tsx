@@ -17,6 +17,7 @@ const fredoka = Fredoka({
 export const metadata: Metadata = {
   title: "Holy Streaks - Desafios de Fé e Oração",
   description: "Participe de desafios diários do terço com seus amigos. Cada terço concluído é uma rosa espiritual para Nossa Senhora.",
+  manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
