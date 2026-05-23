@@ -195,9 +195,10 @@ const getTodayMysteries = () => {
 
 interface GroupsDashboardProps {
   user: User;
+  baseUrl?: string;
 }
 
-export default function GroupsDashboard({ user }: GroupsDashboardProps) {
+export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps) {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(user.profilePhotoUrl || null);
@@ -264,6 +265,10 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
   const minDate = getTomorrowString();
 
   const [userStreak, setUserStreak] = useState<number>(0);
+
+  // Pending Invite Link & Join Requests States
+  const [copyLinkSuccess, setCopyLinkSuccess] = useState(false);
+  const [moderationLoading, setModerationLoading] = useState<string | null>(null);
 
   // Fetch challenges, pending invites and rose streak on mount
   useEffect(() => {
@@ -437,6 +442,62 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
       });
     } finally {
       setInviteLoading(false);
+    }
+  };
+
+  const handleCopyInviteLink = () => {
+    if (!selectedGroup) return;
+    const base = baseUrl || (typeof window !== "undefined" ? window.location.origin : "");
+    const inviteUrl = `${base.replace(/\/$/, "")}/groups/${selectedGroup.id}/join`;
+    navigator.clipboard.writeText(inviteUrl);
+    setCopyLinkSuccess(true);
+    setTimeout(() => setCopyLinkSuccess(false), 2000);
+  };
+
+  const handleAcceptRequest = async (membershipId: string) => {
+    if (!selectedGroup) return;
+    setModerationLoading(membershipId);
+    try {
+      const res = await fetch(`/api/groups/${selectedGroup.id}/requests/${membershipId}`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        await fetchGroupDetails(selectedGroup.id);
+        fetchGroups();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Erro ao aprovar solicitação.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro de conexão ao aprovar solicitação.");
+    } finally {
+      setModerationLoading(null);
+    }
+  };
+
+  const handleRejectRequest = async (membershipId: string) => {
+    if (!selectedGroup) return;
+    const confirmed = window.confirm("Deseja recusar a entrada deste guerreiro no desafio?");
+    if (!confirmed) return;
+
+    setModerationLoading(membershipId);
+    try {
+      const res = await fetch(`/api/groups/${selectedGroup.id}/requests/${membershipId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        await fetchGroupDetails(selectedGroup.id);
+        fetchGroups();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Erro ao recusar solicitação.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro de conexão ao recusar solicitação.");
+    } finally {
+      setModerationLoading(null);
     }
   };
 
@@ -846,6 +907,77 @@ export default function GroupsDashboard({ user }: GroupsDashboardProps) {
                             {inviteLoading ? <span className="spinner-inline"></span> : "Adicionar"}
                           </button>
                         </form>
+
+                        {/* Public Invite Link Option */}
+                        <div className="border-t border-[#2A1D19]/10 mt-5 pt-4">
+                          <h5 className="text-[0.82rem] font-extrabold text-[#2A1D19] m-0 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                            <span>🔗</span> Link de Convite do Grupo
+                          </h5>
+                          <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-3 leading-relaxed">
+                            Qualquer pessoa com o link pode solicitar entrada. A entrada dependerá da sua aprovação.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleCopyInviteLink}
+                            className="w-full bg-[#FFF2EE] text-[#E96B46] border-[2.5px] border-[#E96B46] rounded-[24px] py-2.5 px-4 text-xs font-black cursor-pointer shadow-[0_2.5px_0_#E96B46] hover:-translate-y-[1px] hover:shadow-[0_3.5px_0_#E96B46] active:translate-y-[0.5px] active:shadow-[0_1px_0_#E96B46] transition-all duration-150 uppercase"
+                          >
+                            {copyLinkSuccess ? "✓ Copiado com Sucesso!" : "Copiar Link de Convite"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Join Requests Queue (Only visible to Creator) */}
+                    {selectedGroup.role === "CREATOR" && selectedGroupDetails && selectedGroupDetails.members.filter(m => m.status === "REQUESTED").length > 0 && (
+                      <div className="bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_4.5px_0_#2A1D19] text-left animate-fade-in">
+                        <h4 className="text-[1.15rem] font-extrabold text-[#2A1D19] m-0 mb-1 flex items-center gap-1.5 font-fredoka uppercase">
+                          <span>⏳</span> Solicitações de Entrada ({selectedGroupDetails.members.filter(m => m.status === "REQUESTED").length})
+                        </h4>
+                        <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-4 leading-relaxed">
+                          Aprove ou recuse os guerreiros que solicitaram entrar neste desafio:
+                        </p>
+
+                        <div className="flex flex-col gap-3">
+                          {selectedGroupDetails.members.filter(m => m.status === "REQUESTED").map((member) => (
+                            <div
+                              key={member.id}
+                              className="bg-white border-[2px] border-[#2A1D19] rounded-[20px] p-3.5 shadow-[0_3.5px_0_#2A1D19] flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-2.5 truncate">
+                                <div className="w-9 h-9 rounded-full overflow-hidden border-[1.5px] border-[#2A1D19] bg-[#FFF2EE] flex items-center justify-center flex-shrink-0">
+                                  {member.user.profilePhotoUrl ? (
+                                    <img src={member.user.profilePhotoUrl} alt={member.user.firstName} className="w-full h-full object-cover" />
+                                  ) : (
+                                    getInitials(member.user.firstName, member.user.lastName)
+                                  )}
+                                </div>
+                                <div className="truncate text-left">
+                                  <div className="text-[0.8rem] font-black text-[#2A1D19] truncate">{member.user.firstName} {member.user.lastName}</div>
+                                  <div className="text-[0.68rem] text-[#E96B46] font-bold">@{member.user.username}</div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <button
+                                  onClick={() => handleAcceptRequest(member.id)}
+                                  disabled={moderationLoading === member.id}
+                                  className="w-8 h-8 rounded-full bg-[#EBF7EE] border-[2px] border-[#2A1D19] text-[#3D6A5D] font-extrabold flex items-center justify-center shadow-[0_2px_0_#2A1D19] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-none cursor-pointer transition-all duration-100 text-xs"
+                                  title="Aprovar Entrada"
+                                >
+                                  ✓
+                                </button>
+                                <button
+                                  onClick={() => handleRejectRequest(member.id)}
+                                  disabled={moderationLoading === member.id}
+                                  className="w-8 h-8 rounded-full bg-red-50 border-[2px] border-[#2A1D19] text-red-600 font-extrabold flex items-center justify-center shadow-[0_2px_0_#2A1D19] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-none cursor-pointer transition-all duration-100 text-xs"
+                                  title="Recusar Entrada"
+                                >
+                                  ✗
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
 

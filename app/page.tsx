@@ -10,6 +10,8 @@ export default async function Home() {
     redirect("/onboarding");
   }
 
-  return user ? <GroupsDashboard user={user as any} /> : <LandingPage />;
+  const baseUrl = process.env.MY_APP_BASE_URL || "";
+
+  return user ? <GroupsDashboard user={user as any} baseUrl={baseUrl} /> : <LandingPage />;
 }
 

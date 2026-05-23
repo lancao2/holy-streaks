@@ -55,7 +55,8 @@ function LoginForm() {
         return;
       }
 
-      window.location.href = "/";
+      const callback = searchParams.get("callback") || "/";
+      window.location.href = callback;
     } catch (err) {
       console.error(err);
       setError("Erro de rede. Tente novamente.");

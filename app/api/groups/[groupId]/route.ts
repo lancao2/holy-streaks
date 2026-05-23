@@ -17,7 +17,7 @@ export async function GET(
     const timezone = searchParams.get("timezone") || "America/Sao_Paulo";
     const { groupId } = await params;
 
-    // Verify that the user is a member of this group
+    // Verify that the user is an accepted member of this group (or is the creator)
     const membership = await prisma.groupMember.findUnique({
       where: {
         groupId_userId: {
@@ -27,7 +27,7 @@ export async function GET(
       },
     });
 
-    if (!membership) {
+    if (!membership || (membership.status !== "ACCEPTED" && membership.role !== "CREATOR")) {
       return NextResponse.json({ error: "Você não tem permissão para acessar este grupo." }, { status: 403 });
     }
 
@@ -85,8 +85,13 @@ export async function GET(
       }
     }
 
+    // Filter out "REQUESTED" members if the current user is NOT the creator
+    const allowedMembers = membership.role === "CREATOR"
+      ? group.members
+      : group.members.filter(m => m.status !== "REQUESTED");
+
     // Map members to calculate their streaks dynamically
-    const mappedMembers = group.members.map((member) => {
+    const mappedMembers = allowedMembers.map((member) => {
       // Filter rosaryLogs to only include logs on or after member.joinedAt and on or before group.endDate
       const filteredLogs = member.user.rosaryLogs.filter((log) => {
         try {

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -41,7 +42,8 @@ export default function SignupPage() {
         return;
       }
 
-      window.location.href = "/";
+      const callback = searchParams.get("callback") || "/";
+      window.location.href = callback;
     } catch (err) {
       console.error(err);
       setError("Erro de rede. Tente novamente.");
@@ -170,5 +172,13 @@ export default function SignupPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: "center", marginTop: "100px", fontFamily: "sans-serif", color: "#3f2d34" }}>Carregando cadastro...</div>}>
+      <SignupForm />
+    </Suspense>
   );
 }

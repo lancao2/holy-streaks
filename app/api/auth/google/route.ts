@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+  const baseUrl = process.env.MY_APP_BASE_URL;
+  const redirectUri = baseUrl
+    ? `${baseUrl.replace(/\/$/, "")}/api/auth/google/callback`
+    : process.env.GOOGLE_REDIRECT_URI;
 
   if (!clientId || !redirectUri) {
     return NextResponse.json(

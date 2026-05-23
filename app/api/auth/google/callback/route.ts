@@ -3,23 +3,28 @@ import { cookies } from "next/headers";
 import { prisma } from "../../../../lib/prisma";
 
 export async function GET(request: Request) {
+  const baseUrl = process.env.MY_APP_BASE_URL || request.url;
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
   if (error) {
     console.error("Google OAuth error callback:", error);
-    return NextResponse.redirect(new URL("/login?error=google_cancelled", request.url));
+    return NextResponse.redirect(new URL("/login?error=google_cancelled", baseUrl));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/login?error=no_code", request.url));
+    return NextResponse.redirect(new URL("/login?error=no_code", baseUrl));
   }
 
   try {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    
+    const appBaseUrl = process.env.MY_APP_BASE_URL;
+    const redirectUri = appBaseUrl
+      ? `${appBaseUrl.replace(/\/$/, "")}/api/auth/google/callback`
+      : process.env.GOOGLE_REDIRECT_URI;
 
     if (!clientId || !clientSecret || !redirectUri) {
       return NextResponse.json(
@@ -46,7 +51,7 @@ export async function GET(request: Request) {
     if (!tokenResponse.ok) {
       const errText = await tokenResponse.text();
       console.error("Failed to exchange Google OAuth code:", errText);
-      return NextResponse.redirect(new URL("/login?error=token_exchange_failed", request.url));
+      return NextResponse.redirect(new URL("/login?error=token_exchange_failed", baseUrl));
     }
 
     const { access_token } = await tokenResponse.json();
@@ -60,14 +65,14 @@ export async function GET(request: Request) {
 
     if (!userinfoResponse.ok) {
       console.error("Failed to fetch Google user info");
-      return NextResponse.redirect(new URL("/login?error=fetch_userinfo_failed", request.url));
+      return NextResponse.redirect(new URL("/login?error=fetch_userinfo_failed", baseUrl));
     }
 
     const profile = await userinfoResponse.json();
     const email = profile.email?.toLowerCase().trim();
 
     if (!email) {
-      return NextResponse.redirect(new URL("/login?error=email_not_provided", request.url));
+      return NextResponse.redirect(new URL("/login?error=email_not_provided", baseUrl));
     }
 
     // 3. Find or create user in the database
@@ -110,9 +115,9 @@ export async function GET(request: Request) {
     });
 
     // 6. Redirect to home/dashboard
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/", baseUrl));
   } catch (error) {
     console.error("Error in Google callback handler:", error);
-    return NextResponse.redirect(new URL("/login?error=internal_error", request.url));
+    return NextResponse.redirect(new URL("/login?error=internal_error", baseUrl));
   }
 }
