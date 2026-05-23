@@ -16,8 +16,8 @@ export default function LandingPage() {
 
         <div className="w-full max-w-[500px] bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] px-10 py-12 shadow-[0_6px_0_#2A1D19] z-10 text-center box-border relative">
           <div className="text-center">
-            <span className="text-[3.5rem] inline-block mb-4 filter drop-shadow-[0_2px_0_rgba(42,29,25,0.15)]">🌹</span>
-            <h1 className="bloom-logo text-[2.8rem] m-0 mb-4 tracking-tight">Holy Streaks</h1>
+            
+            <img src="/app_logo.png" alt="Holy Streaks" className="h-16 object-contain mx-auto mb-6" />
             <p className="text-[1.05rem] text-[#8C7D75] font-semibold m-0 mb-10 leading-relaxed">
               Sua jornada espiritual e hábitos diários, compartilhados com quem você ama.
             </p>

@@ -195,9 +195,9 @@ export default function JoinGroupPage({
 
         <div className="w-full max-w-[460px] bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 sm:p-8 shadow-[0_6px_0_#2A1D19] z-10 text-center box-border animate-fade-in">
           {/* Header */}
-          <div className="flex items-center justify-center gap-1.5 mb-5 select-none">
-            <span className="text-2xl">🌹</span>
-            <span className="font-fredoka text-[1.4rem] font-extrabold text-[#2A1D19] uppercase tracking-tight">Holy Streaks</span>
+          <div className="flex items-center justify-center gap-2 mb-5 select-none">
+            
+            <img src="/app_logo.png" alt="Holy Streaks" className="h-16 object-contain" />
           </div>
 
           {/* Group Card Cover (Chunky Polaroid Arch) */}

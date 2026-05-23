@@ -2,7 +2,24 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Home, Flower, Bell, User, LogOut, ArrowLeft, Camera, Pencil, Sparkles, Flame, Sun, Crown, Check, ChevronDown, ChevronUp, Lock } from "lucide-react";
+import {
+  Home,
+  Flower,
+  Bell,
+  User,
+  LogOut,
+  ArrowLeft,
+  Camera,
+  Pencil,
+  Sparkles,
+  Flame,
+  Sun,
+  Crown,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Lock,
+} from "lucide-react";
 import DailyRosaryWidget from "./DailyRosaryWidget";
 
 interface User {
@@ -57,28 +74,28 @@ const getSaintImage = (groupId: string) => {
   const saintImages = [
     {
       name: "Santa Teresinha",
-      url: "https://images.unsplash.com/photo-1580136579312-94651dfd596d?auto=format&fit=crop&w=600&q=80"
+      url: "https://images.unsplash.com/photo-1580136579312-94651dfd596d?auto=format&fit=crop&w=600&q=80",
     },
     {
       name: "São Francisco",
-      url: "https://images.unsplash.com/photo-1601999109332-542b18dbec57?auto=format&fit=crop&w=600&q=80"
+      url: "https://images.unsplash.com/photo-1601999109332-542b18dbec57?auto=format&fit=crop&w=600&q=80",
     },
     {
       name: "Nossa Senhora",
-      url: "https://images.unsplash.com/photo-1548625361-155defe219fa?auto=format&fit=crop&w=600&q=80"
+      url: "https://images.unsplash.com/photo-1548625361-155defe219fa?auto=format&fit=crop&w=600&q=80",
     },
     {
       name: "São Miguel Arcanjo",
-      url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=600&q=80"
+      url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=600&q=80",
     },
     {
       name: "São José",
-      url: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=600&q=80"
+      url: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=600&q=80",
     },
     {
       name: "São Padre Pio",
-      url: "https://images.unsplash.com/photo-1590075865003-e48277afd558?auto=format&fit=crop&w=600&q=80"
-    }
+      url: "https://images.unsplash.com/photo-1590075865003-e48277afd558?auto=format&fit=crop&w=600&q=80",
+    },
   ];
 
   let hash = 0;
@@ -101,7 +118,12 @@ const sortMembers = (members: Member[]) => {
     if (!a.hasLoggedToday && b.hasLoggedToday) return 1;
 
     // 3. If both logged today, compare log times (earlier first)
-    if (a.hasLoggedToday && b.hasLoggedToday && a.todayLoggedAt && b.todayLoggedAt) {
+    if (
+      a.hasLoggedToday &&
+      b.hasLoggedToday &&
+      a.todayLoggedAt &&
+      b.todayLoggedAt
+    ) {
       const timeA = new Date(a.todayLoggedAt).getTime();
       const timeB = new Date(b.todayLoggedAt).getTime();
       if (timeA !== timeB) {
@@ -122,7 +144,7 @@ const getTodayMysteries = () => {
     "Quarta-feira",
     "Quinta-feira",
     "Sexta-feira",
-    "Sábado"
+    "Sábado",
   ];
 
   const todayIndex = new Date().getDay();
@@ -131,15 +153,16 @@ const getTodayMysteries = () => {
   const mysteries = {
     gozosos: {
       title: "Mistérios Gozosos",
-      description: "Contemplamos a alegria da Encarnação e da infância de Jesus.",
+      description:
+        "Contemplamos a alegria da Encarnação e da infância de Jesus.",
       icon: "✨",
       items: [
         "A Anunciação do Anjo e a Encarnação do Verbo",
         "A Visitação de Maria a sua prima Santa Isabel",
         "O Nascimento de Jesus na Gruta de Belém",
         "A Apresentação do Menino Jesus no Templo",
-        "O Encontro do Menino Jesus no Templo entre os Doutores"
-      ]
+        "O Encontro do Menino Jesus no Templo entre os Doutores",
+      ],
     },
     dolorosos: {
       title: "Mistérios Dolorosos",
@@ -150,8 +173,8 @@ const getTodayMysteries = () => {
         "A Flagelação de Nosso Senhor Jesus Cristo",
         "A Coroação de Espinhos de Nosso Senhor",
         "Jesus carregando a Cruz a caminho do Calvário",
-        "A Crucificação e Morte de Nosso Senhor"
-      ]
+        "A Crucificação e Morte de Nosso Senhor",
+      ],
     },
     gloriosos: {
       title: "Mistérios Gloriosos",
@@ -162,8 +185,8 @@ const getTodayMysteries = () => {
         "A Ascensão de Jesus ao Céu",
         "A Vinda do Espírito Santo sobre os Apóstolos",
         "A Assunção de Nossa Senhora ao Céu",
-        "A Coroação de Maria Santíssima no Céu"
-      ]
+        "A Coroação de Maria Santíssima no Céu",
+      ],
     },
     luminosos: {
       title: "Mistérios Luminosos",
@@ -174,9 +197,9 @@ const getTodayMysteries = () => {
         "A Revelação de Jesus nas Bodas de Caná",
         "O Anúncio do Reino de Deus e o chamado à conversão",
         "A Transfiguração de Jesus no Monte Tabor",
-        "A Instituição da Santíssima Eucaristia"
-      ]
-    }
+        "A Instituição da Santíssima Eucaristia",
+      ],
+    },
   };
 
   let selected;
@@ -192,7 +215,7 @@ const getTodayMysteries = () => {
 
   return {
     dayName,
-    ...selected
+    ...selected,
   };
 };
 
@@ -201,19 +224,31 @@ interface GroupsDashboardProps {
   baseUrl?: string;
 }
 
-export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps) {
+export default function GroupsDashboard({
+  user,
+  baseUrl,
+}: GroupsDashboardProps) {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(user.profilePhotoUrl || null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(
+    user.profilePhotoUrl || null,
+  );
   const [uploadingProfilePhoto, setUploadingProfilePhoto] = useState(false);
   const profilePhotoInputRef = useRef<HTMLInputElement>(null);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [selectedGroupDetails, setSelectedGroupDetails] = useState<{ members: Member[]; allowMemberInvites?: boolean } | null>(null);
-  const [activeTab, setActiveTab] = useState<"home" | "diario" | "notificacoes" | "perfil">("home");
+  const [selectedGroupDetails, setSelectedGroupDetails] = useState<{
+    members: Member[];
+    allowMemberInvites?: boolean;
+  } | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "home" | "diario" | "notificacoes" | "perfil"
+  >("home");
   const [autoTriggerUpload, setAutoTriggerUpload] = useState(false);
 
   const router = useRouter();
-  const [currentUserPrivacy, setCurrentUserPrivacy] = useState<boolean>(user.showPrayerPhotos ?? true);
+  const [currentUserPrivacy, setCurrentUserPrivacy] = useState<boolean>(
+    user.showPrayerPhotos ?? true,
+  );
   const [updatingUserPrivacy, setUpdatingUserPrivacy] = useState(false);
 
   const [currentUsername, setCurrentUsername] = useState<string>(user.username);
@@ -260,7 +295,10 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   // Invite Friend Form States
   const [inviteUsername, setInviteUsername] = useState("");
   const [inviteLoading, setInviteLoading] = useState(false);
-  const [inviteFeedback, setInviteFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [inviteFeedback, setInviteFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [leaveLoading, setLeaveLoading] = useState(false);
 
   // Minimum date for datepicker is tomorrow
@@ -275,7 +313,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
   // Pending Invite Link & Join Requests States
   const [copyLinkSuccess, setCopyLinkSuccess] = useState(false);
-  const [moderationLoading, setModerationLoading] = useState<string | null>(null);
+  const [moderationLoading, setModerationLoading] = useState<string | null>(
+    null,
+  );
   const [updatingSettings, setUpdatingSettings] = useState(false);
 
   // Fetch challenges, pending invites and rose streak on mount
@@ -288,7 +328,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   const fetchUserStreak = async () => {
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const res = await fetch(`/api/user/rosary-log?timezone=${encodeURIComponent(timezone)}`);
+      const res = await fetch(
+        `/api/user/rosary-log?timezone=${encodeURIComponent(timezone)}`,
+      );
       if (res.ok) {
         const data = await res.json();
         setUserStreak(data.currentStreak || 0);
@@ -323,7 +365,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
         method: "POST",
       });
       if (res.ok) {
-        setInvitations((prev) => prev.filter((item) => item.id !== membershipId));
+        setInvitations((prev) =>
+          prev.filter((item) => item.id !== membershipId),
+        );
         fetchGroups();
       }
     } catch (err) {
@@ -337,7 +381,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
         method: "DELETE",
       });
       if (res.ok) {
-        setInvitations((prev) => prev.filter((item) => item.id !== membershipId));
+        setInvitations((prev) =>
+          prev.filter((item) => item.id !== membershipId),
+        );
       }
     } catch (err) {
       console.error("Erro ao recusar convite:", err);
@@ -362,7 +408,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   const fetchGroupDetails = async (groupId: string) => {
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const res = await fetch(`/api/groups/${groupId}?timezone=${encodeURIComponent(timezone)}`);
+      const res = await fetch(
+        `/api/groups/${groupId}?timezone=${encodeURIComponent(timezone)}`,
+      );
       const data = await res.json();
       if (res.ok) {
         setSelectedGroupDetails(data.group);
@@ -455,7 +503,8 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
   const handleCopyInviteLink = () => {
     if (!selectedGroup) return;
-    const base = baseUrl || (typeof window !== "undefined" ? window.location.origin : "");
+    const base =
+      baseUrl || (typeof window !== "undefined" ? window.location.origin : "");
     const inviteUrl = `${base.replace(/\/$/, "")}/groups/${selectedGroup.id}/join`;
     navigator.clipboard.writeText(inviteUrl);
     setCopyLinkSuccess(true);
@@ -490,9 +539,12 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
     if (!selectedGroup) return;
     setModerationLoading(membershipId);
     try {
-      const res = await fetch(`/api/groups/${selectedGroup.id}/requests/${membershipId}`, {
-        method: "POST",
-      });
+      const res = await fetch(
+        `/api/groups/${selectedGroup.id}/requests/${membershipId}`,
+        {
+          method: "POST",
+        },
+      );
       if (res.ok) {
         await fetchGroupDetails(selectedGroup.id);
         fetchGroups();
@@ -510,14 +562,19 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
   const handleRejectRequest = async (membershipId: string) => {
     if (!selectedGroup) return;
-    const confirmed = window.confirm("Deseja recusar a entrada deste guerreiro no desafio?");
+    const confirmed = window.confirm(
+      "Deseja recusar a entrada deste guerreiro no desafio?",
+    );
     if (!confirmed) return;
 
     setModerationLoading(membershipId);
     try {
-      const res = await fetch(`/api/groups/${selectedGroup.id}/requests/${membershipId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `/api/groups/${selectedGroup.id}/requests/${membershipId}`,
+        {
+          method: "DELETE",
+        },
+      );
       if (res.ok) {
         await fetchGroupDetails(selectedGroup.id);
         fetchGroups();
@@ -537,7 +594,7 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
     if (!selectedGroup) return;
 
     const confirmed = window.confirm(
-      `Tem certeza que deseja abandonar o desafio "${selectedGroup.name}"?\nSua participação e progresso neste desafio serão excluídos.`
+      `Tem certeza que deseja abandonar o desafio "${selectedGroup.name}"?\nSua participação e progresso neste desafio serão excluídos.`,
     );
     if (!confirmed) return;
 
@@ -606,21 +663,27 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   };
 
   // Determine if the currently selected challenge is over and calculate winners
-  const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
+  const todayStr = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/Sao_Paulo",
+  });
   const endStr = selectedGroup?.endDate
-    ? new Date(selectedGroup.endDate).toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" })
+    ? new Date(selectedGroup.endDate).toLocaleDateString("en-CA", {
+        timeZone: "America/Sao_Paulo",
+      })
     : null;
   const isChallengeOver = endStr ? todayStr > endStr : false;
 
   const acceptedMembers = selectedGroupDetails
     ? selectedGroupDetails.members.filter((m: any) => m.status === "ACCEPTED")
     : [];
-  const maxStreak = acceptedMembers.length > 0
-    ? Math.max(...acceptedMembers.map((m: any) => m.streak))
-    : 0;
-  const winners = (isChallengeOver && maxStreak > 0)
-    ? acceptedMembers.filter((m: any) => m.streak === maxStreak)
-    : [];
+  const maxStreak =
+    acceptedMembers.length > 0
+      ? Math.max(...acceptedMembers.map((m: any) => m.streak))
+      : 0;
+  const winners =
+    isChallengeOver && maxStreak > 0
+      ? acceptedMembers.filter((m: any) => m.streak === maxStreak)
+      : [];
 
   const triggerProfilePhotoUpload = () => {
     if (profilePhotoInputRef.current) {
@@ -628,7 +691,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
     }
   };
 
-  const handleProfilePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePhotoChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -666,7 +731,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
     // Client-side quick check
     const usernameRegex = /^[a-zA-Z0-9_-]{3,30}$/;
     if (!usernameRegex.test(trimmed)) {
-      setEditNicknameError("O nickname deve conter entre 3 e 30 caracteres e usar apenas letras, números, hífen (-) ou underline (_).");
+      setEditNicknameError(
+        "O nickname deve conter entre 3 e 30 caracteres e usar apenas letras, números, hífen (-) ou underline (_).",
+      );
       return;
     }
 
@@ -745,9 +812,12 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
         {/* Top Navbar */}
         <header className="dashboard-header">
-          <div className="logo-group">
-            <span className="logo-icon">🌹</span>
-            <h2 className="bloom-logo text-[1.4rem]">Holy Streaks</h2>
+          <div className="logo-group flex items-center gap-2 select-none">
+            <img
+              src="/app_logo.png"
+              alt="Holy Streaks"
+              className="h-12 object-contain"
+            />
           </div>
 
           <div className="user-profile-widget max-[480px]:hidden">
@@ -759,7 +829,11 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
               {uploadingProfilePhoto ? (
                 <span className="spinner-inline border-[2px] border-t-transparent border-[#2A1D19]"></span>
               ) : profilePhoto ? (
-                <img src={profilePhoto} alt="Foto de perfil" className="w-full h-full object-cover rounded-full" />
+                <img
+                  src={profilePhoto}
+                  alt="Foto de perfil"
+                  className="w-full h-full object-cover rounded-full"
+                />
               ) : (
                 getInitials(user.firstName, user.lastName)
               )}
@@ -768,10 +842,16 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
               </div>
             </div>
             <div className="user-info-text">
-              <span className="user-name-label">{user.firstName} {user.lastName}</span>
+              <span className="user-name-label">
+                {user.firstName} {user.lastName}
+              </span>
               <span className="user-username-label">@{currentUsername}</span>
             </div>
-            <a href="/api/auth/logout" className="logout-btn-nav" title="Sair da Conta">
+            <a
+              href="/api/auth/logout"
+              className="logout-btn-nav"
+              title="Sair da Conta"
+            >
               Sair
             </a>
           </div>
@@ -779,18 +859,24 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
         {/* Main Content Body */}
         <main className="dashboard-body">
-
           {/* TAB 1: HOME (CHALLENGES LIST) */}
-          {activeTab === "home" && (
-            selectedGroup ? (
+          {activeTab === "home" &&
+            (selectedGroup ? (
               <div className="inline-group-details-container animate-fade-in text-left">
                 <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
                   {/* Back button */}
                   <button
                     className="flex items-center gap-1.5 bg-white border-[2.5px] border-[#2A1D19] text-[#2A1D19] font-extrabold px-2 pl-3 py-2.5 rounded-[30px] shadow-[0_3px_0_#2A1D19] hover:-translate-y-[1.5px] hover:shadow-[0_4.5px_0_#2A1D19] active:translate-y-[1px] active:shadow-[0_1.5px_0_#2A1D19] cursor-pointer text-[0.8rem] transition-all duration-150 uppercase"
-                    onClick={() => { setSelectedGroup(null); setSelectedGroupDetails(null); }}
+                    onClick={() => {
+                      setSelectedGroup(null);
+                      setSelectedGroupDetails(null);
+                    }}
                   >
-                    <ArrowLeft size={16} strokeWidth={2.5} className="inline-block mr-1.5 align-middle" />
+                    <ArrowLeft
+                      size={16}
+                      strokeWidth={2.5}
+                      className="inline-block mr-1.5 align-middle"
+                    />
                   </button>
 
                   {/* Leave challenge button with premium flat aesthetic */}
@@ -803,7 +889,11 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                       <span className="spinner-inline border-[2px] border-t-transparent border-[#E96B46]"></span>
                     ) : (
                       <>
-                        <LogOut size={16} strokeWidth={2.5} className="inline-block mr-1.5 align-middle" />
+                        <LogOut
+                          size={16}
+                          strokeWidth={2.5}
+                          className="inline-block mr-1.5 align-middle"
+                        />
                         Abandonar Desafio
                       </>
                     )}
@@ -811,15 +901,17 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-
                   {/* Left Column: Challenge Metadata and Today's Logged Rosaries */}
                   <div className="lg:col-span-2 flex flex-col gap-6">
-
                     {isChallengeOver && (
                       <div className="bg-[#F8E7CD] border-[3px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_5px_0_#2A1D19] text-center relative overflow-hidden animate-fade-in mb-2">
                         {/* Elegant floating laurels/stars in background */}
-                        <div className="absolute -right-6 -bottom-6 text-[6rem] opacity-15 select-none pointer-events-none">🏆</div>
-                        <div className="absolute -left-6 -top-6 text-[6rem] opacity-15 select-none pointer-events-none">🌹</div>
+                        <div className="absolute -right-6 -bottom-6 text-[6rem] opacity-15 select-none pointer-events-none">
+                          🏆
+                        </div>
+                        <div className="absolute -left-6 -top-6 text-[6rem] opacity-15 select-none pointer-events-none">
+                          🌹
+                        </div>
 
                         <span className="inline-block bg-[#E96B46] text-white text-[0.8rem] font-black px-4.5 py-1.5 rounded-[20px] border-[2.5px] border-[#2A1D19] shadow-[1.5px_1.5px_0_#2A1D19] uppercase tracking-wider mb-3">
                           🏆 Desafio Concluído!
@@ -833,43 +925,70 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                           <div className="flex flex-col items-center justify-center gap-3 mt-4">
                             <div className="flex flex-wrap justify-center gap-3">
                               {winners.map((w: any) => (
-                                <div key={w.id} className="bg-white border-[2.5px] border-[#2A1D19] rounded-[20px] px-4.5 py-2.5 shadow-[2px_2px_0_#2A1D19] flex items-center gap-2">
+                                <div
+                                  key={w.id}
+                                  className="bg-white border-[2.5px] border-[#2A1D19] rounded-[20px] px-4.5 py-2.5 shadow-[2px_2px_0_#2A1D19] flex items-center gap-2"
+                                >
                                   <span className="text-xl">👑</span>
                                   <div className="text-left">
-                                    <div className="text-xs font-black text-[#2A1D19]">{w.user.firstName} {w.user.lastName}</div>
-                                    <div className="text-[0.68rem] text-[#E96B46] font-bold">@{w.user.username}</div>
+                                    <div className="text-xs font-black text-[#2A1D19]">
+                                      {w.user.firstName} {w.user.lastName}
+                                    </div>
+                                    <div className="text-[0.68rem] text-[#E96B46] font-bold">
+                                      @{w.user.username}
+                                    </div>
                                   </div>
                                 </div>
                               ))}
                             </div>
                             <p className="text-sm font-extrabold text-[#2A1D19]/80 m-0 mt-2 max-w-[400px] leading-relaxed">
-                              Parabéns! Concluiu o desafio como o guerreiro com a maior oferta de rosas a Nossa Senhora com uma sequência de <strong>{maxStreak} {maxStreak === 1 ? "rosa" : "rosas"}</strong>! 🎉
+                              Parabéns! Concluiu o desafio como o guerreiro com
+                              a maior oferta de rosas a Nossa Senhora com uma
+                              sequência de{" "}
+                              <strong>
+                                {maxStreak} {maxStreak === 1 ? "rosa" : "rosas"}
+                              </strong>
+                              ! 🎉
                             </p>
                           </div>
                         ) : (
                           <p className="text-sm font-bold text-[#8C7D75] m-0 mt-2">
-                            Nenhum participante obteve rosas ativas durante o período do desafio. Que a Virgem Maria abençoe a todos! 🌹
+                            Nenhum participante obteve rosas ativas durante o
+                            período do desafio. Que a Virgem Maria abençoe a
+                            todos! 🌹
                           </p>
                         )}
                       </div>
                     )}
 
                     <div className="group-meta-card">
-                      <h2 className="text-[1.8rem] font-bold text-[#2A1D19] m-0 mb-3 font-fredoka">{selectedGroup.name}</h2>
-                      <p className="group-desc-full text-base mb-6">{selectedGroup.description || "Este desafio não possui descrição."}</p>
+                      <h2 className="text-[1.8rem] font-bold text-[#2A1D19] m-0 mb-3 font-fredoka">
+                        {selectedGroup.name}
+                      </h2>
+                      <p className="group-desc-full text-base mb-6">
+                        {selectedGroup.description ||
+                          "Este desafio não possui descrição."}
+                      </p>
 
                       <div className="challenge-dates-grid">
                         <div className="date-item">
                           <span className="date-item-label">Líder:</span>
-                          <strong>{selectedGroup.creator.firstName} {selectedGroup.creator.lastName}</strong> (@{selectedGroup.creator.username})
+                          <strong>
+                            {selectedGroup.creator.firstName}{" "}
+                            {selectedGroup.creator.lastName}
+                          </strong>{" "}
+                          (@{selectedGroup.creator.username})
                         </div>
                         <div className="date-item">
                           <span className="date-item-label">Meta Final:</span>
                           <strong>
                             {selectedGroup.endDate
-                              ? new Date(selectedGroup.endDate).toLocaleDateString("pt-BR")
+                              ? new Date(
+                                  selectedGroup.endDate,
+                                ).toLocaleDateString("pt-BR")
                               : "Tempo Indeterminado"}
-                          </strong> ({getDaysRemaining(selectedGroup.endDate)})
+                          </strong>{" "}
+                          ({getDaysRemaining(selectedGroup.endDate)})
                         </div>
                       </div>
                     </div>
@@ -882,8 +1001,18 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                         </h4>
                         {selectedGroupDetails && (
                           <span className="bg-[#E96B46] text-white text-[0.85rem] font-black px-3.5 py-1 rounded-[16px] border-[2.5px] border-[#2A1D19] shadow-[2px_2px_0_#2A1D19] flex-shrink-0">
-                            {selectedGroupDetails.members.filter(m => m.status === "ACCEPTED" && m.hasLoggedToday).length}/
-                            {selectedGroupDetails.members.filter(m => m.status === "ACCEPTED").length}
+                            {
+                              selectedGroupDetails.members.filter(
+                                (m) =>
+                                  m.status === "ACCEPTED" && m.hasLoggedToday,
+                              ).length
+                            }
+                            /
+                            {
+                              selectedGroupDetails.members.filter(
+                                (m) => m.status === "ACCEPTED",
+                              ).length
+                            }
                           </span>
                         )}
                       </div>
@@ -891,20 +1020,29 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                         <div className="bg-white border-[2px] border-[#2A1D19]/10 rounded-[20px] p-4 text-center text-sm text-[#8C7D75]">
                           Buscando registros de hoje...
                         </div>
-                      ) : selectedGroupDetails.members.filter(m => m.status === "ACCEPTED" && m.hasLoggedToday).length === 0 ? (
+                      ) : selectedGroupDetails.members.filter(
+                          (m) => m.status === "ACCEPTED" && m.hasLoggedToday,
+                        ).length === 0 ? (
                         <div className="bg-white border-[2px] border-[#2A1D19]/10 rounded-[20px] p-6 text-center text-sm text-[#8C7D75]">
                           <span className="text-2xl block mb-1">🤍</span>
                           Nenhum registro ainda hoje.
-                          <p className="text-[0.75rem] text-[#8C7D75] m-0 mt-1">Seja o primeiro a ofertar uma rosa a Nossa Senhora!</p>
+                          <p className="text-[0.75rem] text-[#8C7D75] m-0 mt-1">
+                            Seja o primeiro a ofertar uma rosa a Nossa Senhora!
+                          </p>
                         </div>
                       ) : (
                         <div className="flex overflow-x-auto gap-4 pb-2.5 scrollbar-premium snap-x snap-mandatory text-left">
                           {selectedGroupDetails.members
-                            .filter(m => m.status === "ACCEPTED" && m.hasLoggedToday)
+                            .filter(
+                              (m) =>
+                                m.status === "ACCEPTED" && m.hasLoggedToday,
+                            )
                             .map((member) => (
                               <div
                                 key={member.id}
-                                onClick={() => router.push(`/user/${member.user.username}`)}
+                                onClick={() =>
+                                  router.push(`/user/${member.user.username}`)
+                                }
                                 className="min-w-[130px] w-[130px] sm:min-w-[150px] sm:w-[150px] flex-shrink-0 bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-[24px] p-3.5 flex flex-col items-center shadow-[0_3px_0_#2A1D19] snap-start cursor-pointer hover:-translate-y-[1.5px] hover:shadow-[0_4.5px_0_#2A1D19] transition-all duration-150 select-none"
                               >
                                 {/* Cathedral Arch/Dome shaped image preview, styled like BLOOM */}
@@ -946,28 +1084,50 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                     {selectedGroup.role === "CREATOR" && !isChallengeOver && (
                       <div className="invite-friend-box">
                         <h4>Convidar Guerreiro por Nickname</h4>
-                        <p className="invite-box-subtitle">O usuário convidado receberá um convite para aceitar ou recusar participar.</p>
+                        <p className="invite-box-subtitle">
+                          O usuário convidado receberá um convite para aceitar
+                          ou recusar participar.
+                        </p>
 
                         {inviteFeedback && (
-                          <div className={`alert-inline alert-inline-${inviteFeedback.type}`}>
+                          <div
+                            className={`alert-inline alert-inline-${inviteFeedback.type}`}
+                          >
                             {inviteFeedback.message}
                           </div>
                         )}
 
-                        <form onSubmit={handleInviteFriend} className="invite-form-row">
+                        <form
+                          onSubmit={handleInviteFriend}
+                          className="invite-form-row"
+                        >
                           <div className="invite-input-wrapper">
                             <span className="invite-at">@</span>
                             <input
                               type="text"
                               placeholder="username_do_amigo"
                               value={inviteUsername}
-                              onChange={(e) => setInviteUsername(e.target.value.toLowerCase().replace(/\s+/g, ""))}
+                              onChange={(e) =>
+                                setInviteUsername(
+                                  e.target.value
+                                    .toLowerCase()
+                                    .replace(/\s+/g, ""),
+                                )
+                              }
                               required
                               disabled={inviteLoading}
                             />
                           </div>
-                          <button type="submit" className="invite-submit-btn" disabled={inviteLoading || !inviteUsername}>
-                            {inviteLoading ? <span className="spinner-inline"></span> : "Adicionar"}
+                          <button
+                            type="submit"
+                            className="invite-submit-btn"
+                            disabled={inviteLoading || !inviteUsername}
+                          >
+                            {inviteLoading ? (
+                              <span className="spinner-inline"></span>
+                            ) : (
+                              "Adicionar"
+                            )}
                           </button>
                         </form>
 
@@ -976,8 +1136,13 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                           <label className="flex items-center gap-2.5 cursor-pointer select-none">
                             <input
                               type="checkbox"
-                              checked={selectedGroupDetails?.allowMemberInvites || false}
-                              onChange={(e) => handleToggleAllowMemberInvites(e.target.checked)}
+                              checked={
+                                selectedGroupDetails?.allowMemberInvites ||
+                                false
+                              }
+                              onChange={(e) =>
+                                handleToggleAllowMemberInvites(e.target.checked)
+                              }
                               disabled={updatingSettings}
                               className="w-4 h-4 rounded border-[#2A1D19] text-[#E96B46] focus:ring-[#E96B46] cursor-pointer"
                             />
@@ -986,7 +1151,8 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                                 Permitir compartilhamento de link
                               </span>
                               <span className="text-[0.65rem] text-[#8C7D75] font-semibold block leading-tight">
-                                Outros membros comuns poderão criar e pegar o link de convite.
+                                Outros membros comuns poderão criar e pegar o
+                                link de convite.
                               </span>
                             </div>
                           </label>
@@ -998,91 +1164,128 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                             <span>🔗</span> Link de Convite do Grupo
                           </h5>
                           <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-3 leading-relaxed">
-                            Qualquer pessoa com o link pode solicitar entrada. A entrada dependerá da sua aprovação.
+                            Qualquer pessoa com o link pode solicitar entrada. A
+                            entrada dependerá da sua aprovação.
                           </p>
                           <button
                             type="button"
                             onClick={handleCopyInviteLink}
                             className="w-full bg-[#FFF2EE] text-[#E96B46] border-[2.5px] border-[#E96B46] rounded-[24px] py-2.5 px-4 text-xs font-black cursor-pointer shadow-[0_2.5px_0_#E96B46] hover:-translate-y-[1px] hover:shadow-[0_3.5px_0_#E96B46] active:translate-y-[0.5px] active:shadow-[0_1px_0_#E96B46] transition-all duration-150 uppercase"
                           >
-                            {copyLinkSuccess ? "✓ Copiado com Sucesso!" : "Copiar Link de Convite"}
+                            {copyLinkSuccess
+                              ? "✓ Copiado com Sucesso!"
+                              : "Copiar Link de Convite"}
                           </button>
                         </div>
                       </div>
                     )}
 
                     {/* Member Invite Link Box - Visible to standard members ONLY when allowed by the creator */}
-                    {selectedGroup.role !== "CREATOR" && selectedGroupDetails?.allowMemberInvites && !isChallengeOver && (
-                      <div className="bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_4.5px_0_#2A1D19] text-left animate-fade-in">
-                        <h4 className="text-[1.1rem] font-extrabold text-[#2A1D19] m-0 mb-1 flex items-center gap-1.5 font-fredoka uppercase">
-                          <span>🔗</span> Convidar Amigos
-                        </h4>
-                        <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-4 leading-relaxed">
-                          O líder permitiu o compartilhamento deste desafio! Copie o link de convite e envie para seus amigos.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={handleCopyInviteLink}
-                          className="w-full bg-[#FFF2EE] text-[#E96B46] border-[2.5px] border-[#E96B46] rounded-[24px] py-2.5 px-4 text-xs font-black cursor-pointer shadow-[0_2.5px_0_#E96B46] hover:-translate-y-[1px] hover:shadow-[0_3.5px_0_#E96B46] active:translate-y-[0.5px] active:shadow-[0_1px_0_#E96B46] transition-all duration-150 uppercase"
-                        >
-                          {copyLinkSuccess ? "✓ Copiado com Sucesso!" : "Copiar Link de Convite"}
-                        </button>
-                      </div>
-                    )}
+                    {selectedGroup.role !== "CREATOR" &&
+                      selectedGroupDetails?.allowMemberInvites &&
+                      !isChallengeOver && (
+                        <div className="bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_4.5px_0_#2A1D19] text-left animate-fade-in">
+                          <h4 className="text-[1.1rem] font-extrabold text-[#2A1D19] m-0 mb-1 flex items-center gap-1.5 font-fredoka uppercase">
+                            <span>🔗</span> Convidar Amigos
+                          </h4>
+                          <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-4 leading-relaxed">
+                            O líder permitiu o compartilhamento deste desafio!
+                            Copie o link de convite e envie para seus amigos.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleCopyInviteLink}
+                            className="w-full bg-[#FFF2EE] text-[#E96B46] border-[2.5px] border-[#E96B46] rounded-[24px] py-2.5 px-4 text-xs font-black cursor-pointer shadow-[0_2.5px_0_#E96B46] hover:-translate-y-[1px] hover:shadow-[0_3.5px_0_#E96B46] active:translate-y-[0.5px] active:shadow-[0_1px_0_#E96B46] transition-all duration-150 uppercase"
+                          >
+                            {copyLinkSuccess
+                              ? "✓ Copiado com Sucesso!"
+                              : "Copiar Link de Convite"}
+                          </button>
+                        </div>
+                      )}
 
                     {/* Join Requests Queue (Only visible to Creator) */}
-                    {selectedGroup.role === "CREATOR" && selectedGroupDetails && selectedGroupDetails.members.filter(m => m.status === "REQUESTED").length > 0 && (
-                      <div className="bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_4.5px_0_#2A1D19] text-left animate-fade-in">
-                        <h4 className="text-[1.15rem] font-extrabold text-[#2A1D19] m-0 mb-1 flex items-center gap-1.5 font-fredoka uppercase">
-                          <span>⏳</span> Solicitações de Entrada ({selectedGroupDetails.members.filter(m => m.status === "REQUESTED").length})
-                        </h4>
-                        <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-4 leading-relaxed">
-                          Aprove ou recuse os guerreiros que solicitaram entrar neste desafio:
-                        </p>
+                    {selectedGroup.role === "CREATOR" &&
+                      selectedGroupDetails &&
+                      selectedGroupDetails.members.filter(
+                        (m) => m.status === "REQUESTED",
+                      ).length > 0 && (
+                        <div className="bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_4.5px_0_#2A1D19] text-left animate-fade-in">
+                          <h4 className="text-[1.15rem] font-extrabold text-[#2A1D19] m-0 mb-1 flex items-center gap-1.5 font-fredoka uppercase">
+                            <span>⏳</span> Solicitações de Entrada (
+                            {
+                              selectedGroupDetails.members.filter(
+                                (m) => m.status === "REQUESTED",
+                              ).length
+                            }
+                            )
+                          </h4>
+                          <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-4 leading-relaxed">
+                            Aprove ou recuse os guerreiros que solicitaram
+                            entrar neste desafio:
+                          </p>
 
-                        <div className="flex flex-col gap-3">
-                          {selectedGroupDetails.members.filter(m => m.status === "REQUESTED").map((member) => (
-                            <div
-                              key={member.id}
-                              className="bg-white border-[2px] border-[#2A1D19] rounded-[20px] p-3.5 shadow-[0_3.5px_0_#2A1D19] flex items-center justify-between gap-3"
-                            >
-                              <div className="flex items-center gap-2.5 truncate">
-                                <div className="w-9 h-9 rounded-full overflow-hidden border-[1.5px] border-[#2A1D19] bg-[#FFF2EE] flex items-center justify-center flex-shrink-0">
-                                  {member.user.profilePhotoUrl ? (
-                                    <img src={member.user.profilePhotoUrl} alt={member.user.firstName} className="w-full h-full object-cover" />
-                                  ) : (
-                                    getInitials(member.user.firstName, member.user.lastName)
-                                  )}
-                                </div>
-                                <div className="truncate text-left">
-                                  <div className="text-[0.8rem] font-black text-[#2A1D19] truncate">{member.user.firstName} {member.user.lastName}</div>
-                                  <div className="text-[0.68rem] text-[#E96B46] font-bold">@{member.user.username}</div>
-                                </div>
-                              </div>
+                          <div className="flex flex-col gap-3">
+                            {selectedGroupDetails.members
+                              .filter((m) => m.status === "REQUESTED")
+                              .map((member) => (
+                                <div
+                                  key={member.id}
+                                  className="bg-white border-[2px] border-[#2A1D19] rounded-[20px] p-3.5 shadow-[0_3.5px_0_#2A1D19] flex items-center justify-between gap-3"
+                                >
+                                  <div className="flex items-center gap-2.5 truncate">
+                                    <div className="w-9 h-9 rounded-full overflow-hidden border-[1.5px] border-[#2A1D19] bg-[#FFF2EE] flex items-center justify-center flex-shrink-0">
+                                      {member.user.profilePhotoUrl ? (
+                                        <img
+                                          src={member.user.profilePhotoUrl}
+                                          alt={member.user.firstName}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        getInitials(
+                                          member.user.firstName,
+                                          member.user.lastName,
+                                        )
+                                      )}
+                                    </div>
+                                    <div className="truncate text-left">
+                                      <div className="text-[0.8rem] font-black text-[#2A1D19] truncate">
+                                        {member.user.firstName}{" "}
+                                        {member.user.lastName}
+                                      </div>
+                                      <div className="text-[0.68rem] text-[#E96B46] font-bold">
+                                        @{member.user.username}
+                                      </div>
+                                    </div>
+                                  </div>
 
-                              <div className="flex items-center gap-1.5 flex-shrink-0">
-                                <button
-                                  onClick={() => handleAcceptRequest(member.id)}
-                                  disabled={moderationLoading === member.id}
-                                  className="w-8 h-8 rounded-full bg-[#EBF7EE] border-[2px] border-[#2A1D19] text-[#3D6A5D] font-extrabold flex items-center justify-center shadow-[0_2px_0_#2A1D19] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-none cursor-pointer transition-all duration-100 text-xs"
-                                  title="Aprovar Entrada"
-                                >
-                                  ✓
-                                </button>
-                                <button
-                                  onClick={() => handleRejectRequest(member.id)}
-                                  disabled={moderationLoading === member.id}
-                                  className="w-8 h-8 rounded-full bg-red-50 border-[2px] border-[#2A1D19] text-red-600 font-extrabold flex items-center justify-center shadow-[0_2px_0_#2A1D19] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-none cursor-pointer transition-all duration-100 text-xs"
-                                  title="Recusar Entrada"
-                                >
-                                  ✗
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <button
+                                      onClick={() =>
+                                        handleAcceptRequest(member.id)
+                                      }
+                                      disabled={moderationLoading === member.id}
+                                      className="w-8 h-8 rounded-full bg-[#EBF7EE] border-[2px] border-[#2A1D19] text-[#3D6A5D] font-extrabold flex items-center justify-center shadow-[0_2px_0_#2A1D19] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-none cursor-pointer transition-all duration-100 text-xs"
+                                      title="Aprovar Entrada"
+                                    >
+                                      ✓
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleRejectRequest(member.id)
+                                      }
+                                      disabled={moderationLoading === member.id}
+                                      className="w-8 h-8 rounded-full bg-red-50 border-[2px] border-[#2A1D19] text-red-600 font-extrabold flex items-center justify-center shadow-[0_2px_0_#2A1D19] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-none cursor-pointer transition-all duration-100 text-xs"
+                                      title="Recusar Entrada"
+                                    >
+                                      ✗
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {/* Members List Section */}
                     <div className="members-list-box">
@@ -1095,12 +1298,18 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                       ) : (
                         <div className="members-scrollable">
                           {/* Active Members */}
-                          {sortMembers(selectedGroupDetails.members.filter(m => m.status === "ACCEPTED")).map((member, index) => {
+                          {sortMembers(
+                            selectedGroupDetails.members.filter(
+                              (m) => m.status === "ACCEPTED",
+                            ),
+                          ).map((member, index) => {
                             const isFirst = index === 0;
                             return (
                               <div
                                 key={member.id}
-                                onClick={() => router.push(`/user/${member.user.username}`)}
+                                onClick={() =>
+                                  router.push(`/user/${member.user.username}`)
+                                }
                                 className={`member-list-item ${isFirst ? "first-place-highlight" : ""} cursor-pointer hover:bg-[#FFF2EE] transition-all duration-150 select-none`}
                               >
                                 {isFirst && (
@@ -1110,75 +1319,118 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                                 )}
                                 <div className="member-avatar overflow-hidden relative flex items-center justify-center">
                                   {member.user.profilePhotoUrl ? (
-                                    <img src={member.user.profilePhotoUrl} alt={member.user.firstName} className="w-full h-full object-cover rounded-full" />
+                                    <img
+                                      src={member.user.profilePhotoUrl}
+                                      alt={member.user.firstName}
+                                      className="w-full h-full object-cover rounded-full"
+                                    />
                                   ) : (
-                                    getInitials(member.user.firstName, member.user.lastName)
+                                    getInitials(
+                                      member.user.firstName,
+                                      member.user.lastName,
+                                    )
                                   )}
                                 </div>
 
                                 <div className="member-info">
-                                  <span className="member-name">{member.user.firstName} {member.user.lastName}</span>
-                                  <span className="member-handle">@{member.user.username}</span>
-                                </div>
-
-                                <div className="member-streak-column">
-                                  <span className={`flame-badge-member ${member.streak > 0 ? "active-flame" : "inactive-flame"}`}>
-                                    🌹 {member.streak} {member.streak === 1 ? "rosa" : "rosas"}
+                                  <span className="member-name">
+                                    {member.user.firstName}{" "}
+                                    {member.user.lastName}
+                                  </span>
+                                  <span className="member-handle">
+                                    @{member.user.username}
                                   </span>
                                 </div>
 
                                 <div className="member-role-col">
                                   {member.role === "CREATOR" ? (
-                                    <span className="badge-role-gold">Líder</span>
+                                    <span className="badge-role-gold">
+                                      Líder
+                                    </span>
                                   ) : (
-                                    <span className="badge-role-grey">Membro</span>
+                                    <span className=""></span>
                                   )}
+                                </div>
+
+                                <div className="member-streak-column">
+                                  <span
+                                    className={`flame-badge-member ${member.streak > 0 ? "active-flame" : "inactive-flame"}`}
+                                  >
+                                    🌹 {member.streak}{" "}
+                                    {member.streak === 1 ? "rosa" : "rosas"}
+                                  </span>
                                 </div>
                               </div>
                             );
                           })}
 
                           {/* Pending Invited Members */}
-                          {selectedGroupDetails.members.filter(m => m.status === "PENDING").length > 0 && (
+                          {selectedGroupDetails.members.filter(
+                            (m) => m.status === "PENDING",
+                          ).length > 0 && (
                             <>
                               <div className="border-t border-[#2A1D19]/10 my-4 pt-4 text-left">
                                 <h5 className="text-[0.82rem] font-extrabold text-[#8C7D75] m-0 mb-3 flex items-center gap-1.5 uppercase">
-                                  <span>⏳</span> Convites Pendentes ({selectedGroupDetails.members.filter(m => m.status === "PENDING").length})
+                                  <span>⏳</span> Convites Pendentes (
+                                  {
+                                    selectedGroupDetails.members.filter(
+                                      (m) => m.status === "PENDING",
+                                    ).length
+                                  }
+                                  )
                                 </h5>
                               </div>
-                              {selectedGroupDetails.members.filter(m => m.status === "PENDING").map((member) => (
-                                <div key={member.id} className="member-list-item opacity-60">
-                                  <div className="member-avatar bg-gray-150 text-gray-500 overflow-hidden relative flex items-center justify-center">
-                                    {member.user.profilePhotoUrl ? (
-                                      <img src={member.user.profilePhotoUrl} alt={member.user.firstName} className="w-full h-full object-cover rounded-full opacity-70" />
-                                    ) : (
-                                      getInitials(member.user.firstName, member.user.lastName)
-                                    )}
-                                  </div>
+                              {selectedGroupDetails.members
+                                .filter((m) => m.status === "PENDING")
+                                .map((member) => (
+                                  <div
+                                    key={member.id}
+                                    className="member-list-item opacity-60"
+                                  >
+                                    <div className="member-avatar bg-gray-150 text-gray-500 overflow-hidden relative flex items-center justify-center">
+                                      {member.user.profilePhotoUrl ? (
+                                        <img
+                                          src={member.user.profilePhotoUrl}
+                                          alt={member.user.firstName}
+                                          className="w-full h-full object-cover rounded-full opacity-70"
+                                        />
+                                      ) : (
+                                        getInitials(
+                                          member.user.firstName,
+                                          member.user.lastName,
+                                        )
+                                      )}
+                                    </div>
 
-                                  <div className="member-info">
-                                    <span className="member-name text-gray-500">{member.user.firstName} {member.user.lastName}</span>
-                                    <span className="member-handle">@{member.user.username}</span>
-                                  </div>
+                                    <div className="member-info">
+                                      <span className="member-name text-gray-500">
+                                        {member.user.firstName}{" "}
+                                        {member.user.lastName}
+                                      </span>
+                                      <span className="member-handle">
+                                        @{member.user.username}
+                                      </span>
+                                    </div>
 
-                                  <div className="member-streak-column">
-                                    <span className="text-[0.8rem] bg-gray-100 text-gray-400 border border-gray-200/50 rounded-full px-2.5 py-1">
-                                      Pendente
-                                    </span>
-                                  </div>
+                                    <div className="member-streak-column">
+                                      <span className="text-[0.8rem] bg-gray-100 text-gray-400 border border-gray-200/50 rounded-full px-2.5 py-1">
+                                        Pendente
+                                      </span>
+                                    </div>
 
-                                  <div className="member-role-col">
-                                    <span className="badge-role-grey">Convidado</span>
+                                    <div className="member-role-col">
+                                      <span className="badge-role-grey">
+                                        Convidado
+                                      </span>
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
                             </>
                           )}
                         </div>
                       )}
                     </div>
                   </div>
-
                 </div>
               </div>
             ) : (
@@ -1186,7 +1438,11 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                 <section className="welcome-banner">
                   <div className="welcome-banner-text">
                     <h1>Desafios de Fé 🌹</h1>
-                    <p>Participe de desafios diários do terço com seus amigos. Cada terço concluído adiciona uma rosa ao jardim de Nossa Senhora!</p>
+                    <p>
+                      Participe de desafios diários do terço com seus amigos.
+                      Cada terço concluído adiciona uma rosa ao jardim de Nossa
+                      Senhora!
+                    </p>
                   </div>
 
                   {/* Rose Counter Badge on page / */}
@@ -1194,21 +1450,33 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                     <span className="welcome-streak-icon">🌹</span>
                     <div className="welcome-streak-info">
                       <span className="welcome-streak-count">{userStreak}</span>
-                      <span className="welcome-streak-label">{userStreak === 1 ? "Rosa" : "Rosas"}</span>
+                      <span className="welcome-streak-label">
+                        {userStreak === 1 ? "Rosa" : "Rosas"}
+                      </span>
                     </div>
                   </div>
 
-                  <button className="create-group-btn-banner" onClick={() => setShowCreateModal(true)}>
+                  <button
+                    className="create-group-btn-banner"
+                    onClick={() => setShowCreateModal(true)}
+                  >
                     + Criar Novo Desafio
                   </button>
                 </section>
 
                 {/* Mysteries of the Day Widget */}
-                <section className={`mysteries-day-section bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] shadow-[0_4.5px_0_#2A1D19] mb-8 text-left relative overflow-hidden transition-all duration-300 ${mysteriesCollapsed ? "p-4" : "p-6"
-                  }`}>
+                <section
+                  className={`mysteries-day-section bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] shadow-[0_4.5px_0_#2A1D19] mb-8 text-left relative overflow-hidden transition-all duration-300 ${
+                    mysteriesCollapsed ? "p-4" : "p-6"
+                  }`}
+                >
                   {/* Subtle background decoration - clean Lucide Flower vector */}
                   <div className="absolute right-[-20px] top-[-20px] text-[#E96B46] opacity-[0.04] pointer-events-none select-none">
-                    <Flower size={mysteriesCollapsed ? 95 : 135} strokeWidth={1.5} className="transition-all duration-300" />
+                    <Flower
+                      size={mysteriesCollapsed ? 95 : 135}
+                      strokeWidth={1.5}
+                      className="transition-all duration-300"
+                    />
                   </div>
 
                   <div className="flex flex-wrap justify-between items-center gap-3 border-b border-[#2A1D19]/10 pb-3">
@@ -1217,7 +1485,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                         Mistérios de Hoje ({todayMysteries.dayName})
                       </span>
                       <h3 className="text-[1.4rem] font-black text-[#2A1D19] m-0 font-fredoka uppercase flex items-center gap-2 mt-0.5">
-                        <span className="text-[1.45rem]">{todayMysteries.icon}</span>
+                        <span className="text-[1.45rem]">
+                          {todayMysteries.icon}
+                        </span>
                         {todayMysteries.title}
                       </h3>
                     </div>
@@ -1227,11 +1497,21 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                         {completedDecades.length}/5 Mistérios
                       </span>
                       <button
-                        onClick={() => setMysteriesCollapsed(!mysteriesCollapsed)}
+                        onClick={() =>
+                          setMysteriesCollapsed(!mysteriesCollapsed)
+                        }
                         className="flex items-center justify-center border-[2px] border-[#2A1D19] rounded-[10px] w-9 h-9 bg-[#F3EEEC] hover:bg-[#EAE2E0] transition-colors shadow-[1.5px_1.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[1px_1px_0_#2A1D19]"
-                        title={!mysteriesCollapsed ? "Mostrar mistérios" : "Recolher mistérios"}
+                        title={
+                          !mysteriesCollapsed
+                            ? "Mostrar mistérios"
+                            : "Recolher mistérios"
+                        }
                       >
-                        {!mysteriesCollapsed ? <ChevronDown size={18} strokeWidth={2.5} /> : <ChevronUp size={18} strokeWidth={2.5} />}
+                        {!mysteriesCollapsed ? (
+                          <ChevronDown size={18} strokeWidth={2.5} />
+                        ) : (
+                          <ChevronUp size={18} strokeWidth={2.5} />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -1239,7 +1519,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                   {!mysteriesCollapsed && (
                     <div className="mt-4 flex flex-col gap-2.5 animate-fadeIn">
                       <span className="text-[0.72rem] font-black text-[#8C7D75] uppercase tracking-wider">
-                        {hasLoggedToday ? "Terço do dia concluído 🌹" : "Toque nos números para marcar:"}
+                        {hasLoggedToday
+                          ? "Terço do dia concluído 🌹"
+                          : "Toque nos números para marcar:"}
                       </span>
                       <div className="flex justify-around items-center">
                         {todayMysteries.items.map((item, idx) => {
@@ -1249,9 +1531,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                               key={idx}
                               onClick={() => {
                                 if (hasLoggedToday) return;
-                                setCompletedDecades(prev => {
+                                setCompletedDecades((prev) => {
                                   const next = prev.includes(idx)
-                                    ? prev.filter(i => i !== idx)
+                                    ? prev.filter((i) => i !== idx)
                                     : [...prev, idx];
 
                                   // When all 5 mysteries are checked off, redirect to Daily Rosary log and trigger the photo rules flow!
@@ -1262,13 +1544,15 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                                   return next;
                                 });
                               }}
-                              className={`w-10 h-10 rounded-full border-[2.5px] border-[#2A1D19] font-black text-sm flex items-center justify-center transition-all duration-150 shadow-[2px_2px_0_#2A1D19] ${hasLoggedToday
-                                ? "cursor-default opacity-90"
-                                : "hover:-translate-y-[1px] hover:shadow-[2.5px_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[1px_1px_0_#2A1D19]"
-                                } ${isCompleted
+                              className={`w-10 h-10 rounded-full border-[2.5px] border-[#2A1D19] font-black text-sm flex items-center justify-center transition-all duration-150 shadow-[2px_2px_0_#2A1D19] ${
+                                hasLoggedToday
+                                  ? "cursor-default opacity-90"
+                                  : "hover:-translate-y-[1px] hover:shadow-[2.5px_2.5px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[1px_1px_0_#2A1D19]"
+                              } ${
+                                isCompleted
                                   ? "bg-[#3D6A5D] border-[#3D6A5D] text-white"
                                   : "bg-white text-[#2A1D19] hover:bg-[#F3EEEC]"
-                                }`}
+                              }`}
                               title={item}
                             >
                               {idx + 1}
@@ -1293,9 +1577,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                               key={idx}
                               onClick={() => {
                                 if (hasLoggedToday) return;
-                                setCompletedDecades(prev => {
+                                setCompletedDecades((prev) => {
                                   const next = prev.includes(idx)
-                                    ? prev.filter(i => i !== idx)
+                                    ? prev.filter((i) => i !== idx)
                                     : [...prev, idx];
 
                                   // When all 5 mysteries are checked off, redirect to Daily Rosary log and trigger the photo rules flow!
@@ -1306,20 +1590,38 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                                   return next;
                                 });
                               }}
-                              className={`select-none border-[2px] border-[#2A1D19] rounded-[20px] p-3.5 transition-all duration-150 relative flex flex-col justify-between min-h-[105px] shadow-[0_3px_0_#2A1D19] ${hasLoggedToday
-                                ? "cursor-default opacity-90"
-                                : "cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_4px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[0_2px_0_#2A1D19]"
-                                } ${isCompleted ? "bg-[#EBF7EE] border-[#4F857D]" : "bg-white"
-                                }`}
+                              className={`select-none border-[2px] border-[#2A1D19] rounded-[20px] p-3.5 transition-all duration-150 relative flex flex-col justify-between min-h-[105px] shadow-[0_3px_0_#2A1D19] ${
+                                hasLoggedToday
+                                  ? "cursor-default opacity-90"
+                                  : "cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_4px_0_#2A1D19] active:translate-y-[0.5px] active:shadow-[0_2px_0_#2A1D19]"
+                              } ${
+                                isCompleted
+                                  ? "bg-[#EBF7EE] border-[#4F857D]"
+                                  : "bg-white"
+                              }`}
                             >
                               <div className="flex justify-between items-start gap-1">
-                                <span className={`text-[0.7rem] font-black w-5 h-5 rounded-full flex items-center justify-center border-[1.5px] border-[#2A1D19] transition-all duration-150 ${isCompleted ? "bg-[#3D6A5D] border-[#3D6A5D] text-white" : "bg-[#F3EEEC] text-[#8C7D75]"
-                                  }`}>
-                                  {isCompleted ? <Check size={12} strokeWidth={3} /> : idx + 1}
+                                <span
+                                  className={`text-[0.7rem] font-black w-5 h-5 rounded-full flex items-center justify-center border-[1.5px] border-[#2A1D19] transition-all duration-150 ${
+                                    isCompleted
+                                      ? "bg-[#3D6A5D] border-[#3D6A5D] text-white"
+                                      : "bg-[#F3EEEC] text-[#8C7D75]"
+                                  }`}
+                                >
+                                  {isCompleted ? (
+                                    <Check size={12} strokeWidth={3} />
+                                  ) : (
+                                    idx + 1
+                                  )}
                                 </span>
                               </div>
-                              <p className={`text-[0.75rem] font-extrabold m-0 mt-3.5 leading-snug transition-all duration-150 ${isCompleted ? "text-[#3D6A5D] line-through opacity-75" : "text-[#2A1D19]"
-                                }`}>
+                              <p
+                                className={`text-[0.75rem] font-extrabold m-0 mt-3.5 leading-snug transition-all duration-150 ${
+                                  isCompleted
+                                    ? "text-[#3D6A5D] line-through opacity-75"
+                                    : "text-[#2A1D19]"
+                                }`}
+                              >
                                 {item}
                               </p>
                             </div>
@@ -1344,8 +1646,14 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                     <div className="empty-state-card">
                       <span className="empty-icon">🌹</span>
                       <h4>Nenhum desafio ativo</h4>
-                      <p>Você não participa de nenhum desafio ainda. Crie um desafio ou peça para um amigo convidar você!</p>
-                      <button className="create-group-btn-empty" onClick={() => setShowCreateModal(true)}>
+                      <p>
+                        Você não participa de nenhum desafio ainda. Crie um
+                        desafio ou peça para um amigo convidar você!
+                      </p>
+                      <button
+                        className="create-group-btn-empty"
+                        onClick={() => setShowCreateModal(true)}
+                      >
                         Criar Primeiro Desafio
                       </button>
                     </div>
@@ -1354,7 +1662,11 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                       {groups.map((group) => {
                         const saint = getSaintImage(group.id);
                         return (
-                          <div key={group.id} className="group-card" onClick={() => openGroupDetails(group)}>
+                          <div
+                            key={group.id}
+                            className="group-card"
+                            onClick={() => openGroupDetails(group)}
+                          >
                             <div className="group-card-cover-container">
                               <div className="group-card-cover-arch">
                                 <img
@@ -1365,9 +1677,13 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                               </div>
 
                               {group.role === "CREATOR" ? (
-                                <span className="group-card-badge-role">👑 Líder</span>
+                                <span className="group-card-badge-role">
+                                  👑 Líder
+                                </span>
                               ) : (
-                                <span className="group-card-badge-role">👑 {saint.name}</span>
+                                <span className="group-card-badge-role">
+                                  👑 {saint.name}
+                                </span>
                               )}
 
                               <div className="group-card-action-btn-overlay">
@@ -1378,12 +1694,18 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                             <div className="group-card-content-area">
                               <h4 className="group-card-title">{group.name}</h4>
                               <p className="group-card-desc">
-                                {group.description || "Sem descrição fornecida para este desafio."}
+                                {group.description ||
+                                  "Sem descrição fornecida para este desafio."}
                               </p>
 
                               <div className="group-card-footer-metrics">
                                 <div className="group-card-metric-badge">
-                                  <span>{group.memberCount} {group.memberCount === 1 ? "guerreiro" : "guerreiros"}</span>
+                                  <span>
+                                    {group.memberCount}{" "}
+                                    {group.memberCount === 1
+                                      ? "guerreiro"
+                                      : "guerreiros"}
+                                  </span>
                                 </div>
                                 <div className="group-card-days-tag">
                                   <span>⏳</span>
@@ -1398,8 +1720,7 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                   )}
                 </section>
               </>
-            )
-          )}
+            ))}
 
           {/* TAB 2: DIARIO (DAILY ROSARY LOG) */}
           {activeTab === "diario" && (
@@ -1426,24 +1747,37 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                 <div className="empty-state-card">
                   <span className="empty-icon">🔔</span>
                   <h4>Nenhum convite pendente</h4>
-                  <p>Você não possui convites pendentes no momento. Convide seus amigos para participarem dos seus desafios!</p>
+                  <p>
+                    Você não possui convites pendentes no momento. Convide seus
+                    amigos para participarem dos seus desafios!
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {invitations.map((invite) => (
-                    <div key={invite.id} className="bg-white border-[2.5px] border-[#2A1D19] rounded-[24px] p-6 flex flex-col justify-between shadow-[0_4.5px_0_#2A1D19]">
+                    <div
+                      key={invite.id}
+                      className="bg-white border-[2.5px] border-[#2A1D19] rounded-[24px] p-6 flex flex-col justify-between shadow-[0_4.5px_0_#2A1D19]"
+                    >
                       <div>
                         <div className="flex justify-between items-start mb-3">
-                          <h4 className="text-[1.15rem] font-bold text-[#2A1D19] m-0">{invite.group.name}</h4>
+                          <h4 className="text-[1.15rem] font-bold text-[#2A1D19] m-0">
+                            {invite.group.name}
+                          </h4>
                           <span className="text-[0.72rem] bg-[#FFF2EE] text-[#E96B46] border-[1.5px] border-[#2A1D19] rounded-full px-2.5 py-1 font-extrabold uppercase shadow-[0_1.5px_0_#2A1D19]">
                             Convite
                           </span>
                         </div>
                         <p className="text-[0.88rem] text-[#8C7D75] m-0 mb-4 leading-relaxed font-semibold">
-                          {invite.group.description || "Este desafio não possui descrição."}
+                          {invite.group.description ||
+                            "Este desafio não possui descrição."}
                         </p>
                         <div className="text-[0.82rem] text-[#2A1D19] mb-4 font-bold">
-                          Convidado por: <span className="text-[#E96B46]">@{invite.group.creator.username}</span> ({invite.group.creator.firstName})
+                          Convidado por:{" "}
+                          <span className="text-[#E96B46]">
+                            @{invite.group.creator.username}
+                          </span>{" "}
+                          ({invite.group.creator.firstName})
                         </div>
                       </div>
                       <div className="flex gap-3">
@@ -1484,7 +1818,11 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                     {uploadingProfilePhoto ? (
                       <span className="spinner-inline border-[2px] border-t-transparent border-[#2A1D19] w-6 h-6"></span>
                     ) : profilePhoto ? (
-                      <img src={profilePhoto} alt="Foto de perfil" className="w-full h-full object-cover rounded-full" />
+                      <img
+                        src={profilePhoto}
+                        alt="Foto de perfil"
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     ) : (
                       <span className="font-extrabold text-[1.8rem] text-[#E96B46]">
                         {getInitials(user.firstName, user.lastName)}
@@ -1496,9 +1834,13 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                   </div>
                 </div>
 
-                <h2 className="font-bold text-[#2A1D19] text-[1.5rem] m-0 mb-1">{user.firstName} {user.lastName}</h2>
+                <h2 className="font-bold text-[#2A1D19] text-[1.5rem] m-0 mb-1">
+                  {user.firstName} {user.lastName}
+                </h2>
                 <div className="flex items-center justify-center gap-1.5 mb-6">
-                  <p className="text-[#E96B46] font-extrabold text-[0.95rem] m-0">@{currentUsername}</p>
+                  <p className="text-[#E96B46] font-extrabold text-[0.95rem] m-0">
+                    @{currentUsername}
+                  </p>
                   <button
                     onClick={() => {
                       setNewNickname(currentUsername);
@@ -1515,19 +1857,29 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
                 <div className="bg-[#F6F0E8] border-[2.5px] border-[#2A1D19] rounded-[20px] p-5 text-left mb-6">
                   <div className="flex justify-between items-center py-2 border-b border-[#2A1D19]/10">
-                    <span className="text-[0.85rem] text-[#8C7D75] font-semibold">E-mail cadastrado</span>
-                    <span className="text-[0.88rem] text-[#2A1D19] font-bold">{user.email}</span>
+                    <span className="text-[0.85rem] text-[#8C7D75] font-semibold">
+                      E-mail cadastrado
+                    </span>
+                    <span className="text-[0.88rem] text-[#2A1D19] font-bold">
+                      {user.email}
+                    </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-[#2A1D19]/10">
-                    <span className="text-[0.85rem] text-[#8C7D75] font-semibold">Desafios ativos</span>
-                    <span className="text-[0.88rem] text-[#2A1D19] font-bold">{groups.length}</span>
+                  <div className="flex justify-between items-center py-2 border-[#2A1D19]/10">
+                    <span className="text-[0.85rem] text-[#8C7D75] font-semibold">
+                      Desafios ativos
+                    </span>
+                    <span className="text-[0.88rem] text-[#2A1D19] font-bold">
+                      {groups.length}
+                    </span>
                   </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-[0.85rem] text-[#8C7D75] font-semibold">Identificação</span>
+                  {/* <div className="flex justify-between items-center py-2">
+                    <span className="text-[0.85rem] text-[#8C7D75] font-semibold">
+                      Identificação
+                    </span>
                     <span className="text-[0.72rem] bg-white border border-[#2A1D19]/15 rounded-md px-1.5 py-0.5 text-gray-500 font-mono select-all">
                       {user.id}
                     </span>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Configurações de Privacidade */}
@@ -1539,7 +1891,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                     <input
                       type="checkbox"
                       checked={currentUserPrivacy}
-                      onChange={(e) => handleToggleUserPrivacy(e.target.checked)}
+                      onChange={(e) =>
+                        handleToggleUserPrivacy(e.target.checked)
+                      }
                       disabled={updatingUserPrivacy}
                       className="w-4.5 h-4.5 rounded border-[#2A1D19] text-[#E96B46] focus:ring-[#E96B46] mt-0.5 cursor-pointer"
                     />
@@ -1548,7 +1902,9 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                         Exibir fotos de terço aos amigos
                       </span>
                       <span className="text-[0.68rem] text-[#8C7D75] font-semibold block mt-1 leading-snug">
-                        Quando ativado, os outros guerreiros dos grupos poderão contemplar as fotos das suas ofertas de rosas. Quando desativado, apenas você poderá vê-las.
+                        Quando ativado, os outros guerreiros dos grupos poderão
+                        contemplar as fotos das suas ofertas de rosas. Quando
+                        desativado, apenas você poderá vê-las.
                       </span>
                     </div>
                   </label>
@@ -1563,21 +1919,33 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
               </div>
             </section>
           )}
-
         </main>
-
-
 
         {/* Create Challenge Modal */}
         {showCreateModal && (
-          <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-            <div className="modal-content create-group-card" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-overlay"
+            onClick={() => setShowCreateModal(false)}
+          >
+            <div
+              className="modal-content create-group-card"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="modal-close-header">
                 <h3>Criar Novo Desafio</h3>
-                <button className="close-x-btn" onClick={() => setShowCreateModal(false)}>×</button>
+                <button
+                  className="close-x-btn"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  ×
+                </button>
               </div>
 
-              {createError && <div className="alert-inline alert-inline-error">{createError}</div>}
+              {createError && (
+                <div className="alert-inline alert-inline-error">
+                  {createError}
+                </div>
+              )}
 
               <form onSubmit={handleCreateGroup} className="create-group-form">
                 <div className="form-group-modal">
@@ -1608,7 +1976,16 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
                 <div className="form-group-modal">
                   <label htmlFor="groupEndDate">
-                    Data de Término do Desafio <span style={{ color: "var(--text-secondary)", fontSize: "0.8rem", fontWeight: "normal" }}>(Opcional)</span>
+                    Data de Término do Desafio{" "}
+                    <span
+                      style={{
+                        color: "var(--text-secondary)",
+                        fontSize: "0.8rem",
+                        fontWeight: "normal",
+                      }}
+                    >
+                      (Opcional)
+                    </span>
                   </label>
                   <input
                     id="groupEndDate"
@@ -1618,13 +1995,29 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                     onChange={(e) => setNewGroupEndDate(e.target.value)}
                     disabled={createLoading}
                   />
-                  <span style={{ color: "var(--accent-terracotta)", fontSize: "0.75rem", marginTop: "4px", fontWeight: "bold" }}>
-                    Deixe em branco para um desafio contínuo (tempo indeterminado) ♾️
+                  <span
+                    style={{
+                      color: "var(--accent-terracotta)",
+                      fontSize: "0.75rem",
+                      marginTop: "4px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Deixe em branco para um desafio contínuo (tempo
+                    indeterminado) ♾️
                   </span>
                 </div>
 
-                <button type="submit" className="create-group-submit-btn" disabled={createLoading || !newGroupName.trim()}>
-                  {createLoading ? <span className="spinner"></span> : "Criar Desafio 🚀"}
+                <button
+                  type="submit"
+                  className="create-group-submit-btn"
+                  disabled={createLoading || !newGroupName.trim()}
+                >
+                  {createLoading ? (
+                    <span className="spinner"></span>
+                  ) : (
+                    "Criar Desafio 🚀"
+                  )}
                 </button>
               </form>
             </div>
@@ -1633,21 +2026,39 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
 
         {/* Edit Nickname Modal */}
         {showEditNicknameModal && (
-          <div className="modal-overlay" onClick={() => setShowEditNicknameModal(false)}>
-            <div className="modal-content create-group-card" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-overlay"
+            onClick={() => setShowEditNicknameModal(false)}
+          >
+            <div
+              className="modal-content create-group-card"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="modal-close-header">
                 <h3>Editar Seu Nickname</h3>
-                <button className="close-x-btn" onClick={() => setShowEditNicknameModal(false)}>×</button>
+                <button
+                  className="close-x-btn"
+                  onClick={() => setShowEditNicknameModal(false)}
+                >
+                  ×
+                </button>
               </div>
 
-              {editNicknameError && <div className="alert-inline alert-inline-error">{editNicknameError}</div>}
+              {editNicknameError && (
+                <div className="alert-inline alert-inline-error">
+                  {editNicknameError}
+                </div>
+              )}
               {editNicknameSuccess && (
                 <div className="alert-inline alert-inline-success">
                   🎉 Nickname atualizado com sucesso!
                 </div>
               )}
 
-              <form onSubmit={handleUpdateNickname} className="create-group-form">
+              <form
+                onSubmit={handleUpdateNickname}
+                className="create-group-form"
+              >
                 <div className="form-group-modal">
                   <label htmlFor="editNickname">Novo Nickname</label>
                   <div className="invite-input-wrapper mt-1">
@@ -1657,24 +2068,45 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                       type="text"
                       placeholder="seu_novo_nickname"
                       value={newNickname}
-                      onChange={(e) => setNewNickname(e.target.value.toLowerCase().replace(/\s+/g, ""))}
+                      onChange={(e) =>
+                        setNewNickname(
+                          e.target.value.toLowerCase().replace(/\s+/g, ""),
+                        )
+                      }
                       required
                       maxLength={30}
                       disabled={editNicknameLoading || editNicknameSuccess}
                       style={{ paddingLeft: "26px" }}
                     />
                   </div>
-                  <span style={{ color: "var(--text-secondary)", fontSize: "0.75rem", marginTop: "6px", lineHeight: "1.4" }}>
-                    Deve conter de 3 a 30 caracteres (apenas letras, números, hífen ou underline).
+                  <span
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontSize: "0.75rem",
+                      marginTop: "6px",
+                      lineHeight: "1.4",
+                    }}
+                  >
+                    Deve conter de 3 a 30 caracteres (apenas letras, números,
+                    hífen ou underline).
                   </span>
                 </div>
 
                 <button
                   type="submit"
                   className="create-group-submit-btn mt-2"
-                  disabled={editNicknameLoading || editNicknameSuccess || !newNickname.trim() || newNickname.trim().toLowerCase() === currentUsername}
+                  disabled={
+                    editNicknameLoading ||
+                    editNicknameSuccess ||
+                    !newNickname.trim() ||
+                    newNickname.trim().toLowerCase() === currentUsername
+                  }
                 >
-                  {editNicknameLoading ? <span className="spinner"></span> : "Salvar Alterações"}
+                  {editNicknameLoading ? (
+                    <span className="spinner"></span>
+                  ) : (
+                    "Salvar Alterações"
+                  )}
                 </button>
               </form>
             </div>
