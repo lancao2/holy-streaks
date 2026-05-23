@@ -54,6 +54,7 @@ export async function GET(
                 username: true,
                 email: true,
                 profilePhotoUrl: true,
+                showPrayerPhotos: true,
                 rosaryLogs: {
                   select: {
                     id: true,
@@ -125,6 +126,12 @@ export async function GET(
         return logDateStr === todayDateStr;
       });
 
+      // Apply photo privacy rules:
+      // Hide photo if the user is NOT the current logged-in user AND has showPrayerPhotos === false
+      const isSelf = member.user.id === user.id;
+      const canShowPhoto = isSelf || member.user.showPrayerPhotos;
+      const todayPhotoUrl = todayLog ? (canShowPhoto ? todayLog.photoUrl : "private") : null;
+
       // Remove rosaryLogs payload from the JSON to keep it lightweight
       const { rosaryLogs, ...userWithoutLogs } = member.user as any;
 
@@ -136,7 +143,7 @@ export async function GET(
         user: userWithoutLogs,
         streak: currentStreak,
         hasLoggedToday,
-        todayPhotoUrl: todayLog ? todayLog.photoUrl : null,
+        todayPhotoUrl,
         todayLoggedAt: todayLog ? todayLog.createdAt.toISOString() : null,
       };
     });

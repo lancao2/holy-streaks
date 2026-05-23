@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Home, Flower, Bell, User, LogOut, ArrowLeft, Camera, Pencil, Sparkles, Flame, Sun, Crown, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Home, Flower, Bell, User, LogOut, ArrowLeft, Camera, Pencil, Sparkles, Flame, Sun, Crown, Check, ChevronDown, ChevronUp, Lock } from "lucide-react";
 import DailyRosaryWidget from "./DailyRosaryWidget";
 
 interface User {
@@ -11,6 +12,7 @@ interface User {
   email: string;
   username: string;
   profilePhotoUrl?: string | null;
+  showPrayerPhotos?: boolean;
 }
 
 interface Group {
@@ -209,6 +211,10 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   const [selectedGroupDetails, setSelectedGroupDetails] = useState<{ members: Member[]; allowMemberInvites?: boolean } | null>(null);
   const [activeTab, setActiveTab] = useState<"home" | "diario" | "notificacoes" | "perfil">("home");
   const [autoTriggerUpload, setAutoTriggerUpload] = useState(false);
+
+  const router = useRouter();
+  const [currentUserPrivacy, setCurrentUserPrivacy] = useState<boolean>(user.showPrayerPhotos ?? true);
+  const [updatingUserPrivacy, setUpdatingUserPrivacy] = useState(false);
 
   const [currentUsername, setCurrentUsername] = useState<string>(user.username);
   const [showEditNicknameModal, setShowEditNicknameModal] = useState(false);
@@ -698,6 +704,28 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
     }
   };
 
+  const handleToggleUserPrivacy = async (checked: boolean) => {
+    setUpdatingUserPrivacy(true);
+    try {
+      const res = await fetch("/api/user/privacy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ showPrayerPhotos: checked }),
+      });
+      if (res.ok) {
+        setCurrentUserPrivacy(checked);
+      } else {
+        const data = await res.json();
+        alert(data.error || "Erro ao atualizar privacidade.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro de rede ao salvar privacidade.");
+    } finally {
+      setUpdatingUserPrivacy(false);
+    }
+  };
+
   return (
     <>
       {/* Dynamic font loading */}
@@ -874,10 +902,19 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                           {selectedGroupDetails.members
                             .filter(m => m.status === "ACCEPTED" && m.hasLoggedToday)
                             .map((member) => (
-                              <div key={member.id} className="min-w-[130px] w-[130px] sm:min-w-[150px] sm:w-[150px] flex-shrink-0 bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-[24px] p-3.5 flex flex-col items-center shadow-[0_3px_0_#2A1D19] snap-start">
+                              <div
+                                key={member.id}
+                                onClick={() => router.push(`/user/${member.user.username}`)}
+                                className="min-w-[130px] w-[130px] sm:min-w-[150px] sm:w-[150px] flex-shrink-0 bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] rounded-[24px] p-3.5 flex flex-col items-center shadow-[0_3px_0_#2A1D19] snap-start cursor-pointer hover:-translate-y-[1.5px] hover:shadow-[0_4.5px_0_#2A1D19] transition-all duration-150 select-none"
+                              >
                                 {/* Cathedral Arch/Dome shaped image preview, styled like BLOOM */}
                                 <div className="w-full aspect-[4/5] rounded-t-[9999px] rounded-b-[16px] overflow-hidden bg-[#FFF2EE] border-[2.5px] border-[#2A1D19] mb-2.5 relative flex items-center justify-center">
-                                  {member.todayPhotoUrl ? (
+                                  {member.todayPhotoUrl === "private" ? (
+                                    <div className="flex flex-col items-center justify-center text-[#E96B46] text-xs font-bold gap-1 bg-white w-full h-full">
+                                      <Lock size={18} strokeWidth={2.5} />
+                                      <span>Privado</span>
+                                    </div>
+                                  ) : member.todayPhotoUrl ? (
                                     <img
                                       src={member.todayPhotoUrl}
                                       alt={`Terço de ${member.user.firstName}`}
@@ -1063,7 +1100,8 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                             return (
                               <div
                                 key={member.id}
-                                className={`member-list-item ${isFirst ? "first-place-highlight" : ""}`}
+                                onClick={() => router.push(`/user/${member.user.username}`)}
+                                className={`member-list-item ${isFirst ? "first-place-highlight" : ""} cursor-pointer hover:bg-[#FFF2EE] transition-all duration-150 select-none`}
                               >
                                 {isFirst && (
                                   <span className="absolute -top-3.5 -left-2 text-[1.6rem] rotate-[-15deg] drop-shadow-[0_1.5px_0_#2A1D19] z-10 select-none">
@@ -1490,6 +1528,30 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                       {user.id}
                     </span>
                   </div>
+                </div>
+
+                {/* Configurações de Privacidade */}
+                <div className="bg-white border-[2.5px] border-[#2A1D19] rounded-[24px] p-5 text-left mb-6 shadow-[0_3px_0_#2A1D19] select-none">
+                  <h4 className="text-[0.95rem] font-extrabold text-[#2A1D19] m-0 mb-3 flex items-center gap-1.5 font-fredoka uppercase">
+                    <span>🔒</span> Configurações de Privacidade
+                  </h4>
+                  <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={currentUserPrivacy}
+                      onChange={(e) => handleToggleUserPrivacy(e.target.checked)}
+                      disabled={updatingUserPrivacy}
+                      className="w-4.5 h-4.5 rounded border-[#2A1D19] text-[#E96B46] focus:ring-[#E96B46] mt-0.5 cursor-pointer"
+                    />
+                    <div>
+                      <span className="text-[0.82rem] font-extrabold text-[#2A1D19] block leading-tight">
+                        Exibir fotos de terço aos amigos
+                      </span>
+                      <span className="text-[0.68rem] text-[#8C7D75] font-semibold block mt-1 leading-snug">
+                        Quando ativado, os outros guerreiros dos grupos poderão contemplar as fotos das suas ofertas de rosas. Quando desativado, apenas você poderá vê-las.
+                      </span>
+                    </div>
+                  </label>
                 </div>
 
                 <a

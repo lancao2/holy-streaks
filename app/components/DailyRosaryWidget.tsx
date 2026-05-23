@@ -28,6 +28,7 @@ export default function DailyRosaryWidget({
   const [todayPhotoUrl, setTodayPhotoUrl] = useState<string | null>(null);
   const [loggedDates, setLoggedDates] = useState<string[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [firstRecordDate, setFirstRecordDate] = useState<string | null>(null);
 
   // Custom Instruction Modal State
   const [showInstructionModal, setShowInstructionModal] = useState(false);
@@ -65,6 +66,7 @@ export default function DailyRosaryWidget({
         setHasLoggedToday(data.hasLoggedToday);
         setTodayPhotoUrl(data.todayPhotoUrl);
         setLoggedDates(data.loggedDates || []);
+        setFirstRecordDate(data.firstRecordDate || null);
       } else {
         setErrorMsg(data.error || "Erro ao buscar status diário.");
       }
@@ -114,6 +116,7 @@ export default function DailyRosaryWidget({
         // Append today's date to loggedDates list
         const todayStr = new Date().toLocaleDateString("sv-SE", { timeZone: timezone });
         setLoggedDates((prev) => [...prev, todayStr]);
+        setFirstRecordDate((prev) => prev || todayStr);
 
         if (onStreakUpdate) {
           onStreakUpdate(data.currentStreak);
@@ -200,7 +203,7 @@ export default function DailyRosaryWidget({
   const calendarDays = getCalendarDays();
 
   return (
-    <div className="daily-rosary-view-card">
+    <div className="daily-rosary-view-card !p-3 sm:!p-8">
       {/* Floating Action Button (FAB) for Mobile screens - hidden when logged */}
       {!hasLoggedToday && (
         <button
@@ -333,53 +336,130 @@ export default function DailyRosaryWidget({
 
         {/* Right column: Mary's Calendar */}
         <div>
-          <div className="calendar-box">
-            <div className="calendar-header">
-              <button className="calendar-nav-btn" onClick={handlePrevMonth}>◀</button>
-              <span className="calendar-month-title">
-                {MONTH_NAMES[currentMonth]} {currentYear}
-              </span>
-              <button className="calendar-nav-btn" onClick={handleNextMonth}>▶</button>
-            </div>
-
-            {/* Weekdays header */}
-            <div className="calendar-weekdays">
-              {WEEKDAYS.map((day, idx) => (
-                <div key={idx} className="weekday-cell">{day}</div>
-              ))}
-            </div>
-
-            {/* Days grid */}
-            <div className="calendar-days-grid">
-              {calendarDays.map((day, idx) => {
-                if (day === null) {
-                  return <div key={`empty-${idx}`} className="day-cell day-empty"></div>;
-                }
-
-                const logged = isDayLogged(day);
-                const today = isToday(day);
-
-                return (
-                  <div
-                    key={`day-${day}`}
-                    className={`day-cell ${logged ? "day-logged" : "day-unlogged"} ${today ? "day-today" : ""}`}
-                    title={logged ? "Terço concluído 🌹" : today ? "Hoje - Registrar" : ""}
-                  >
-                    <span className="day-number">{day}</span>
-                    {logged && <span className="day-rose-icon">🌹</span>}
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="calendar-legend">
-              <div className="legend-item">
-                <span className="legend-icon logged">🌹</span>
-                <span>Rezado</span>
+          <div className="bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] p-3 sm:p-6 shadow-[0_5px_0_#2A1D19] select-none">
+            <div className="flex justify-center items-center mb-4">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrevMonth}
+                  className="w-8 h-8 flex items-center justify-center bg-[#FFF2EE] border-[2px] border-[#2A1D19] rounded-full shadow-[0_2px_0_#2A1D19] active:translate-y-[1px] active:shadow-none hover:-translate-y-[0.5px] cursor-pointer font-bold text-[#E96B46] text-xs transition-all duration-75 select-none"
+                  title="Mês Anterior"
+                >
+                  ❮
+                </button>
+                <span className="text-[0.78rem] font-extrabold text-[#2A1D19] uppercase font-sans tracking-wide min-w-[90px] text-center">
+                  {[
+                    "Jan",
+                    "Fev",
+                    "Mar",
+                    "Abr",
+                    "Mai",
+                    "Jun",
+                    "Jul",
+                    "Ago",
+                    "Set",
+                    "Out",
+                    "Nov",
+                    "Dez"
+                  ][currentMonth]} {currentYear}
+                </span>
+                <button
+                  onClick={handleNextMonth}
+                  className="w-8 h-8 flex items-center justify-center bg-[#FFF2EE] border-[2px] border-[#2A1D19] rounded-full shadow-[0_2px_0_#2A1D19] active:translate-y-[1px] active:shadow-none hover:-translate-y-[0.5px] cursor-pointer font-bold text-[#E96B46] text-xs transition-all duration-75 select-none"
+                  title="Próximo Mês"
+                >
+                  ❯
+                </button>
               </div>
-              <div className="legend-item">
-                <span className="legend-icon today"></span>
-                <span>Hoje</span>
+            </div>
+
+            {(() => {
+              const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+              const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+              const pad = (n: number) => String(n).padStart(2, "0");
+
+              const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+              const todayStr = new Intl.DateTimeFormat("en-CA", {
+                timeZone: localTimezone,
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              }).format(new Date());
+
+              return (
+                <div className="grid grid-cols-7 gap-0.5 bg-[#FFF2EE]/40 border-[2px] border-[#2A1D19]/10 rounded-[20px] p-1 sm:p-3.5">
+                  {/* Weekdays */}
+                  {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((dLabel, i) => (
+                    <div key={i} className="text-center text-[0.62rem] font-black text-[#8C7D75] uppercase pb-1.5 select-none">
+                      {dLabel}
+                    </div>
+                  ))}
+
+                  {/* Empty cells offset */}
+                  {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                    <div key={`empty-${i}`} className="aspect-square" />
+                  ))}
+
+                  {/* Day cells */}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const dayNum = i + 1;
+                    const fullDateStr = `${currentYear}-${pad(currentMonth + 1)}-${pad(dayNum)}`;
+                    const isFuture = fullDateStr > todayStr;
+                    const isBeforeTracking = firstRecordDate ? fullDateStr < firstRecordDate : true;
+                    const hasPrayed = loggedDates.includes(fullDateStr);
+
+                    let cellStyle = "bg-[#F6F0E8] border-[#2A1D19]/10 text-[#8C7D75]/40";
+                    let emoji = "";
+
+                    if (isFuture) {
+                      cellStyle = "bg-[#F6F0E8]/50 border-[#2A1D19]/5 text-[#8C7D75]/25";
+                    } else if (isBeforeTracking) {
+                      cellStyle = "bg-[#F6F0E8] border-[#2A1D19]/15 text-[#8C7D75]/50";
+                    } else {
+                      // Within active tracking
+                      if (hasPrayed) {
+                        cellStyle = "bg-[#EBF7EE] border-[#2A1D19] text-[#2A1D19] shadow-[0_1.5px_0_#2A1D19] sm:shadow-[0_2px_0_#2A1D19]";
+                        emoji = "🌹";
+                      } else {
+                        if (fullDateStr === todayStr) {
+                          cellStyle = "bg-white border-[#E96B46] border-dashed text-[#E96B46] animate-pulse";
+                          emoji = "🤍";
+                        } else {
+                          cellStyle = "bg-[#FFF2EE] border-[#2A1D19] text-[#2A1D19] shadow-[0_1.5px_0_#2A1D19] sm:shadow-[0_2px_0_#2A1D19]";
+                          emoji = "🥀";
+                        }
+                      }
+                    }
+
+                    return (
+                      <div
+                        key={`day-${dayNum}`}
+                        className={`aspect-square rounded-[10px] sm:rounded-[14px] border-[1.5px] sm:border-[2px] flex flex-col items-center justify-center relative p-0 sm:p-0.5 transition-all duration-100 ${cellStyle}`}
+                      >
+                        <span className="text-[0.6rem] font-bold block leading-none select-none">
+                          {dayNum}
+                        </span>
+                        {emoji && (
+                          <span className="text-[0.88rem] sm:text-[1.05rem] mt-0.5 leading-none block select-none">
+                            {emoji}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+            {/* Legenda do Calendário */}
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3 justify-center text-[0.68rem] text-[#8C7D75] font-semibold border-t border-[#2A1D19]/5 pt-3">
+              <div className="flex items-center gap-1">
+                <span>🌹</span> Rosa Ofertada
+              </div>
+              <div className="flex items-center gap-1">
+                <span>🥀</span> Rosa Murcha
+              </div>
+              <div className="flex items-center gap-1">
+                <span>🤍</span> Hoje (Pendente)
               </div>
             </div>
           </div>

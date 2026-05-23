@@ -13,20 +13,21 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  passwordHash String?       // Nullable for Google OAuth accounts
-  firstName    String
-  lastName     String
-  username     String?       @unique
-  birthDate    DateTime?
+  id              String        @id @default(uuid())
+  email           String        @unique
+  passwordHash    String?       // Nullable for Google OAuth accounts
+  firstName       String
+  lastName        String
+  username        String?       @unique
+  showPrayerPhotos Boolean      @default(true)
+  birthDate       DateTime?
   profilePhotoUrl String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  sessions     Session[]
-  createdGroups Group[]       @relation("GroupCreator")
-  groupMembers  GroupMember[]
-  rosaryLogs    RosaryLog[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  sessions        Session[]
+  createdGroups   Group[]       @relation("GroupCreator")
+  groupMembers    GroupMember[]
+  rosaryLogs      RosaryLog[]
 }
 
 model Session {

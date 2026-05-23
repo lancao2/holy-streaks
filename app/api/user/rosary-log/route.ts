@@ -34,11 +34,22 @@ export async function GET(request: Request) {
       }
     });
 
+    const oldestLog = logs[logs.length - 1];
+    let firstRecordDate: string | null = null;
+    if (oldestLog) {
+      try {
+        firstRecordDate = new Date(oldestLog.createdAt).toLocaleDateString("sv-SE", { timeZone: timezone });
+      } catch (e) {
+        firstRecordDate = new Date(oldestLog.createdAt).toISOString().split("T")[0];
+      }
+    }
+
     return NextResponse.json({
       currentStreak,
       hasLoggedToday,
       todayPhotoUrl: todayLog ? todayLog.photoUrl : null,
       loggedDates,
+      firstRecordDate,
     });
   } catch (error) {
     console.error("Error in GET /api/user/rosary-log:", error);
