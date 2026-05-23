@@ -146,6 +146,7 @@ export async function GET(
       name: group.name,
       description: group.description,
       endDate: group.endDate,
+      allowMemberInvites: group.allowMemberInvites,
       createdAt: group.createdAt,
       creator: group.creator,
       members: mappedMembers,
@@ -215,5 +216,63 @@ export async function DELETE(
   } catch (error) {
     console.error("Error in DELETE /api/groups/[groupId]:", error);
     return NextResponse.json({ error: "Erro interno no servidor ao abandonar o desafio." }, { status: 500 });
+  }
+}
+
+// PATCH /api/groups/[groupId] - Update challenge group settings (Only Creator)
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ groupId: string }> }
+) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+    }
+
+    const { groupId } = await params;
+
+    // 1. Verify that the caller is the CREATOR (Leader) of this group
+    const membership = await prisma.groupMember.findUnique({
+      where: {
+        groupId_userId: {
+          groupId,
+          userId: user.id,
+        },
+      },
+    });
+
+    if (!membership || membership.role !== "CREATOR") {
+      return NextResponse.json(
+        { error: "Apenas o líder do desafio pode alterar as configurações." },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { allowMemberInvites } = body;
+
+    if (allowMemberInvites === undefined || typeof allowMemberInvites !== "boolean") {
+      return NextResponse.json(
+        { error: "Configuração 'allowMemberInvites' inválida." },
+        { status: 400 }
+      );
+    }
+
+    // 2. Update the group
+    const updatedGroup = await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        allowMemberInvites,
+      },
+    });
+
+    return NextResponse.json({ success: true, group: updatedGroup });
+  } catch (error) {
+    console.error("Error in PATCH /api/groups/[groupId]:", error);
+    return NextResponse.json(
+      { error: "Erro interno no servidor ao atualizar configurações." },
+      { status: 500 }
+    );
   }
 }

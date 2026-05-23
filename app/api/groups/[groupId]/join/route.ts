@@ -64,6 +64,7 @@ export async function GET(
         name: group.name,
         description: group.description,
         endDate: group.endDate,
+        allowMemberInvites: group.allowMemberInvites,
         creator: group.creator,
         memberCount,
       },

@@ -38,15 +38,16 @@ model Session {
 }
 
 model Group {
-  id          String        @id @default(uuid())
-  name        String
-  description String?
-  endDate     DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  creatorId   String
-  creator     User          @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-  members     GroupMember[]
+  id                 String        @id @default(uuid())
+  name               String
+  description        String?
+  endDate            DateTime?
+  allowMemberInvites Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  creatorId          String
+  creator            User          @relation("GroupCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  members            GroupMember[]
 }
 
 model GroupMember {

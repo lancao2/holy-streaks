@@ -49,6 +49,7 @@ export async function GET() {
       name: membership.group.name,
       description: membership.group.description,
       endDate: membership.group.endDate,
+      allowMemberInvites: membership.group.allowMemberInvites,
       createdAt: membership.group.createdAt,
       creator: membership.group.creator,
       role: membership.role,

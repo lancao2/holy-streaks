@@ -18,6 +18,7 @@ interface Group {
   name: string;
   description: string | null;
   endDate: string | null;
+  allowMemberInvites?: boolean;
   createdAt: string;
   creator: {
     id: string;
@@ -205,7 +206,7 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   const [uploadingProfilePhoto, setUploadingProfilePhoto] = useState(false);
   const profilePhotoInputRef = useRef<HTMLInputElement>(null);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [selectedGroupDetails, setSelectedGroupDetails] = useState<{ members: Member[] } | null>(null);
+  const [selectedGroupDetails, setSelectedGroupDetails] = useState<{ members: Member[]; allowMemberInvites?: boolean } | null>(null);
   const [activeTab, setActiveTab] = useState<"home" | "diario" | "notificacoes" | "perfil">("home");
   const [autoTriggerUpload, setAutoTriggerUpload] = useState(false);
 
@@ -269,6 +270,7 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
   // Pending Invite Link & Join Requests States
   const [copyLinkSuccess, setCopyLinkSuccess] = useState(false);
   const [moderationLoading, setModerationLoading] = useState<string | null>(null);
+  const [updatingSettings, setUpdatingSettings] = useState(false);
 
   // Fetch challenges, pending invites and rose streak on mount
   useEffect(() => {
@@ -452,6 +454,30 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
     navigator.clipboard.writeText(inviteUrl);
     setCopyLinkSuccess(true);
     setTimeout(() => setCopyLinkSuccess(false), 2000);
+  };
+
+  const handleToggleAllowMemberInvites = async (checked: boolean) => {
+    if (!selectedGroup) return;
+    setUpdatingSettings(true);
+    try {
+      const res = await fetch(`/api/groups/${selectedGroup.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ allowMemberInvites: checked }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        await fetchGroupDetails(selectedGroup.id);
+        fetchGroups();
+      } else {
+        alert(data.error || "Erro ao atualizar configuração.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro de conexão ao atualizar configuração.");
+    } finally {
+      setUpdatingSettings(false);
+    }
   };
 
   const handleAcceptRequest = async (membershipId: string) => {
@@ -778,7 +804,7 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                         {winners.length > 0 ? (
                           <div className="flex flex-col items-center justify-center gap-3 mt-4">
                             <div className="flex flex-wrap justify-center gap-3">
-                              {winners.map(w => (
+                              {winners.map((w: any) => (
                                 <div key={w.id} className="bg-white border-[2.5px] border-[#2A1D19] rounded-[20px] px-4.5 py-2.5 shadow-[2px_2px_0_#2A1D19] flex items-center gap-2">
                                   <span className="text-xl">👑</span>
                                   <div className="text-left">
@@ -908,6 +934,27 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                           </button>
                         </form>
 
+                        {/* Toggle allowMemberInvites */}
+                        <div className="border-t border-[#2A1D19]/10 mt-5 pt-4 text-left">
+                          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={selectedGroupDetails?.allowMemberInvites || false}
+                              onChange={(e) => handleToggleAllowMemberInvites(e.target.checked)}
+                              disabled={updatingSettings}
+                              className="w-4 h-4 rounded border-[#2A1D19] text-[#E96B46] focus:ring-[#E96B46] cursor-pointer"
+                            />
+                            <div>
+                              <span className="text-[0.78rem] font-extrabold text-[#2A1D19] block">
+                                Permitir compartilhamento de link
+                              </span>
+                              <span className="text-[0.65rem] text-[#8C7D75] font-semibold block leading-tight">
+                                Outros membros comuns poderão criar e pegar o link de convite.
+                              </span>
+                            </div>
+                          </label>
+                        </div>
+
                         {/* Public Invite Link Option */}
                         <div className="border-t border-[#2A1D19]/10 mt-5 pt-4">
                           <h5 className="text-[0.82rem] font-extrabold text-[#2A1D19] m-0 mb-2 uppercase tracking-wide flex items-center gap-1.5">
@@ -924,6 +971,25 @@ export default function GroupsDashboard({ user, baseUrl }: GroupsDashboardProps)
                             {copyLinkSuccess ? "✓ Copiado com Sucesso!" : "Copiar Link de Convite"}
                           </button>
                         </div>
+                      </div>
+                    )}
+
+                    {/* Member Invite Link Box - Visible to standard members ONLY when allowed by the creator */}
+                    {selectedGroup.role !== "CREATOR" && selectedGroupDetails?.allowMemberInvites && !isChallengeOver && (
+                      <div className="bg-white border-[2.5px] border-[#2A1D19] rounded-[28px] p-6 shadow-[0_4.5px_0_#2A1D19] text-left animate-fade-in">
+                        <h4 className="text-[1.1rem] font-extrabold text-[#2A1D19] m-0 mb-1 flex items-center gap-1.5 font-fredoka uppercase">
+                          <span>🔗</span> Convidar Amigos
+                        </h4>
+                        <p className="text-[0.72rem] text-[#8C7D75] font-semibold m-0 mb-4 leading-relaxed">
+                          O líder permitiu o compartilhamento deste desafio! Copie o link de convite e envie para seus amigos.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleCopyInviteLink}
+                          className="w-full bg-[#FFF2EE] text-[#E96B46] border-[2.5px] border-[#E96B46] rounded-[24px] py-2.5 px-4 text-xs font-black cursor-pointer shadow-[0_2.5px_0_#E96B46] hover:-translate-y-[1px] hover:shadow-[0_3.5px_0_#E96B46] active:translate-y-[0.5px] active:shadow-[0_1px_0_#E96B46] transition-all duration-150 uppercase"
+                        >
+                          {copyLinkSuccess ? "✓ Copiado com Sucesso!" : "Copiar Link de Convite"}
+                        </button>
                       </div>
                     )}
 
